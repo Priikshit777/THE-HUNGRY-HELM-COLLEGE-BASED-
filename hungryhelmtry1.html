@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Hungry Helm</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#f7f3ed;--parchment:#ede5d8;--paper:#e8ddd0;
+  --ink:#1c1812;--ink2:#3d3528;--ink3:#6b5e4e;--ink4:#9e8e7e;
+  --gold:#b8860b;--gold2:#d4a017;--gold3:#f0c040;
+  --teal:#1a5f5a;--teal2:#2a7f78;--teal-light:#e8f4f3;
+  --rust:#8b3a2a;--rust2:#c05030;
+  --border:#d8cfc4;--border2:#c4b8a8;
+  --shadow-sm:0 2px 8px rgba(28,24,18,0.08);
+  --shadow:0 4px 24px rgba(28,24,18,0.12);
+  --shadow-lg:0 12px 48px rgba(28,24,18,0.18);
+  --r:10px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden;min-height:100vh}
+button,input,select{font-family:'Outfit',sans-serif}
+button{cursor:pointer;border:none;outline:none}
+input,select{outline:none}
+
+/* ─── PAGE SYSTEM ─── */
+.page{display:none;min-height:100vh;animation:fadeUp .38s ease both}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ─── TOPBAR ─── */
+.topbar{position:sticky;top:0;z-index:500;height:56px;background:rgba(247,243,237,0.96);border-bottom:1px solid var(--border);backdrop-filter:blur(12px);display:flex;align-items:center;padding:0 32px;gap:16px}
+.tb-logo{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
+.tb-helm{flex-shrink:0}
+.tb-name{font-family:'Libre Baskerville',serif;font-size:17px;color:var(--ink);letter-spacing:-.2px}
+.tb-sub{font-size:9px;color:var(--ink4);letter-spacing:1.8px;text-transform:uppercase;margin-top:1px}
+.tb-right{display:flex;align-items:center;gap:6px;margin-left:auto}
+.tb-btn{padding:6px 14px;font-size:12px;font-weight:500;color:var(--ink3);border:1px solid var(--border);border-radius:6px;background:transparent;transition:all .18s}
+.tb-btn:hover{background:var(--parchment);border-color:var(--border2);color:var(--ink)}
+.tb-btn.gold{background:var(--gold);color:#fff;border-color:var(--gold);font-weight:600}
+.tb-btn.gold:hover{background:var(--gold2)}
+.tb-btn.teal{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:600}
+.tb-btn.teal:hover{background:var(--teal2)}
+.tb-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;border:2px solid var(--gold2);cursor:pointer}
+.tb-avatar.staff{background:var(--teal);border-color:var(--teal2)}
+.tb-pill{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:600;letter-spacing:.3px}
+.tp-online{background:#e6f4f1;color:var(--teal);border:1px solid rgba(26,95,90,.25)}
+.tp-staff{background:rgba(139,58,42,.1);color:var(--rust);border:1px solid rgba(139,58,42,.2)}
+
+/* ─────────────────────────────── LOGIN PAGE ─── */
+#loginPage{background:var(--cream);display:grid;min-height:100vh;grid-template-columns:1fr 1fr}
+#loginPage.active{display:grid}
+.login-left{padding:80px 60px;display:flex;flex-direction:column;justify-content:center;background:var(--teal);position:relative;overflow:hidden}
+.ll-texture{position:absolute;inset:0;opacity:.06;background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,.4) 40px,rgba(255,255,255,.4) 41px),repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(255,255,255,.4) 40px,rgba(255,255,255,.4) 41px)}
+.ll-content{position:relative;z-index:1}
+.ll-eyebrow{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.ll-eyebrow::before{content:'';width:24px;height:1px;background:currentColor}
+.ll-title{font-family:'Libre Baskerville',serif;font-size:44px;font-weight:400;color:#fff;line-height:1.08;margin-bottom:12px}
+.ll-title em{font-style:italic;color:var(--gold3)}
+.ll-desc{font-size:13px;color:rgba(255,255,255,.65);font-weight:300;line-height:1.75;margin-bottom:40px;max-width:340px}
+.ll-helm{display:flex;justify-content:flex-start;margin-bottom:36px}
+.helm-anim{animation:helmspin 24s linear infinite;transform-origin:center}
+@keyframes helmspin{to{transform:rotate(360deg)}}
+.ll-stats{display:flex;gap:0;border-top:1px solid rgba(255,255,255,.15);padding-top:28px}
+.llstat{padding:0 24px;border-right:1px solid rgba(255,255,255,.15)}
+.llstat:first-child{padding-left:0}
+.llstat:last-child{border-right:none}
+.llstat-n{font-family:'Libre Baskerville',serif;font-size:26px;color:#fff;line-height:1}
+.llstat-l{font-size:10px;color:rgba(255,255,255,.45);letter-spacing:.8px;text-transform:uppercase;margin-top:3px}
+
+.login-right{padding:60px 56px;display:flex;flex-direction:column;justify-content:center;background:var(--cream)}
+.lr-title{font-family:'Libre Baskerville',serif;font-size:26px;color:var(--ink);margin-bottom:6px}
+.lr-sub{font-size:13px;color:var(--ink4);margin-bottom:32px}
+.login-tabs{display:flex;gap:0;margin-bottom:28px;border-bottom:2px solid var(--border)}
+.ltab{padding:10px 0;margin-right:28px;font-size:13px;font-weight:500;color:var(--ink4);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .18s}
+.ltab.on{color:var(--teal);border-bottom-color:var(--teal)}
+.lform{display:flex;flex-direction:column;gap:16px}
+.lform-group label{display:block;font-size:11px;font-weight:600;color:var(--ink3);letter-spacing:.6px;text-transform:uppercase;margin-bottom:5px}
+.lform-input{width:100%;padding:11px 14px;background:#fff;border:1.5px solid var(--border);border-radius:8px;color:var(--ink);font-size:13px;transition:border-color .18s}
+.lform-input:focus{border-color:var(--teal)}
+.lform-input::placeholder{color:var(--ink4)}
+.lform-select{width:100%;padding:11px 14px;background:#fff;border:1.5px solid var(--border);border-radius:8px;color:var(--ink);font-size:13px;cursor:pointer;transition:border-color .18s}
+.lform-select:focus{border-color:var(--teal)}
+.lform-hint{font-size:10px;color:var(--ink4);margin-top:4px;font-style:italic}
+.btn-submit{padding:13px;border-radius:8px;font-size:14px;font-weight:600;width:100%;transition:all .2s;letter-spacing:.2px}
+.btn-student{background:var(--teal);color:#fff}
+.btn-student:hover{background:var(--teal2);transform:translateY(-1px)}
+.btn-staff{background:var(--gold);color:#fff}
+.btn-staff:hover{background:var(--gold2);transform:translateY(-1px)}
+
+/* ─────────────────────────────── STUDENT HOME ─── */
+#homePage{background:var(--cream)}
+.home-hero{padding:52px 56px 44px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,var(--teal) 0%,var(--teal2) 100%);position:relative;overflow:hidden}
+.home-hero::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hh-grid{display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;position:relative;z-index:1;max-width:1100px;margin:0 auto}
+.hh-eyebrow{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:12px}
+.hh-title{font-family:'Libre Baskerville',serif;font-size:36px;font-weight:400;color:#fff;line-height:1.1;margin-bottom:8px}
+.hh-title em{font-style:italic;color:var(--gold3)}
+.hh-sub{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:24px;font-weight:300}
+.hh-stats{display:flex;gap:20px}
+.hstat{padding:0 20px;border-left:1px solid rgba(255,255,255,.18)}
+.hstat:first-child{border-left:none;padding-left:0}
+.hstat-n{font-family:'Libre Baskerville',serif;font-size:22px;color:#fff;line-height:1}
+.hstat-l{font-size:9px;color:rgba(255,255,255,.45);letter-spacing:.7px;text-transform:uppercase;margin-top:2px}
+.hh-helm{position:relative;width:96px;height:96px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.hh-helm-ring{position:absolute;inset:4px;border-radius:50%;border:1px solid rgba(255,255,255,.2)}
+.hh-helm-svg{width:84px;height:84px}
+
+.home-subnav{background:#fff;border-bottom:1px solid var(--border);padding:0 56px;display:flex;gap:0;overflow-x:auto;max-width:none}
+.home-subnav::-webkit-scrollbar{display:none}
+.snav-item{padding:14px 20px;font-size:12px;font-weight:500;color:var(--ink4);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;transition:all .18s}
+.snav-item:hover{color:var(--ink2)}
+.snav-item.on{color:var(--teal);border-bottom-color:var(--teal)}
+
+.tab-section{display:none;padding:40px 56px;max-width:1200px;margin:0 auto}
+.tab-section.on{display:block;animation:fadeUp .3s ease both}
+
+/* ─────────────────────────────── CHART SELECTOR ─── */
+.chart-wrap{position:relative;background:var(--parchment);border:1.5px solid var(--border2);border-radius:14px;overflow:hidden;min-height:520px;margin-bottom:32px}
+.chart-bg{position:absolute;inset:0;opacity:.06;background-image:radial-gradient(circle at 20% 30%,var(--teal) 0%,transparent 50%),radial-gradient(circle at 80% 70%,var(--gold) 0%,transparent 50%)}
+.chart-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(28,24,18,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(28,24,18,.04) 1px,transparent 1px);background-size:60px 60px}
+.chart-compass{position:absolute;bottom:28px;right:36px;width:70px;height:70px;opacity:.2}
+.chart-title{position:absolute;top:22px;left:28px;font-family:'Libre Baskerville',serif;font-size:13px;color:var(--ink3);letter-spacing:.5px;opacity:.6;font-style:italic}
+.chart-rule{position:absolute;top:46px;left:28px;width:60px;height:1px;background:var(--ink3);opacity:.25}
+.chart-ports{position:absolute;inset:0}
+
+/* PORT MARKERS on the chart */
+.port-marker{position:absolute;transform:translate(-50%,-50%);cursor:pointer;z-index:10;transition:all .22s}
+.pm-ring{position:absolute;inset:-18px;border-radius:50%;border:1.5px solid transparent;transition:all .25s}
+.pm-ring2{position:absolute;inset:-32px;border-radius:50%;border:1px solid transparent;transition:all .3s}
+.port-marker:hover .pm-ring{border-color:currentColor;opacity:.5}
+.port-marker.active .pm-ring{border-color:currentColor;opacity:.6;animation:ripple 2s ease-in-out infinite}
+.port-marker.active .pm-ring2{border-color:currentColor;opacity:.25;animation:ripple 2s ease-in-out infinite .4s}
+@keyframes ripple{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.15);opacity:.15}}
+.pm-dot{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .22s;box-shadow:var(--shadow-sm);border:2px solid rgba(255,255,255,.6);position:relative;z-index:1}
+.port-marker:hover .pm-dot{transform:scale(1.12);box-shadow:var(--shadow)}
+.port-marker.active .pm-dot{transform:scale(1.18);box-shadow:var(--shadow-lg)}
+.pm-label{position:absolute;top:calc(100% + 26px);left:50%;transform:translateX(-50%);white-space:nowrap;text-align:center;pointer-events:none}
+.pm-name{font-size:11px;font-weight:600;color:var(--ink2);letter-spacing:.2px;margin-bottom:2px}
+.pm-tag{font-size:9px;color:var(--ink4);letter-spacing:.3px}
+.pm-status{font-size:9px;padding:2px 7px;border-radius:10px;display:inline-block;font-weight:600;margin-top:3px}
+.pms-open{background:#e6f4f1;color:var(--teal);border:1px solid rgba(26,95,90,.2)}
+.pms-busy{background:#fef5e7;color:var(--gold);border:1px solid rgba(180,120,10,.2)}
+.pms-closed{background:#f0ecec;color:var(--ink4);border:1px solid var(--border)}
+
+/* Connecting lines between ports */
+.chart-route{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+
+/* Port detail drawer */
+.port-drawer{position:absolute;right:0;top:0;bottom:0;width:340px;background:#fff;border-left:1.5px solid var(--border);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:20;display:flex;flex-direction:column}
+.port-drawer.open{transform:none}
+.pd-header{padding:22px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px}
+.pd-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.pd-name{font-family:'Libre Baskerville',serif;font-size:18px;font-weight:700;color:var(--ink)}
+.pd-cuisine{font-size:11px;color:var(--ink4);margin-top:2px}
+.pd-close{margin-left:auto;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);background:transparent;color:var(--ink4);display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0}
+.pd-close:hover{border-color:var(--ink3);color:var(--ink)}
+.pd-meta{padding:14px 24px;border-bottom:1px solid var(--border);display:flex;gap:16px}
+.pdm-item{font-size:11px;color:var(--ink4);display:flex;align-items:center;gap:5px}
+.pdm-val{font-weight:600;color:var(--ink2)}
+.pd-cats{padding:12px 24px;border-bottom:1px solid var(--border);display:flex;gap:5px;overflow-x:auto}
+.pd-cats::-webkit-scrollbar{display:none}
+.pdcat{padding:4px 12px;border-radius:16px;font-size:10px;font-weight:500;cursor:pointer;border:1px solid var(--border);color:var(--ink4);background:transparent;transition:all .15s;white-space:nowrap}
+.pdcat:hover{border-color:var(--border2);color:var(--ink2)}
+.pdcat.on{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:600}
+.pd-items{flex:1;overflow-y:auto;padding:8px 0}
+.pd-items::-webkit-scrollbar{width:3px}
+.pd-items::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.pd-item{display:flex;align-items:center;gap:11px;padding:11px 24px;transition:background .14s;cursor:pointer}
+.pd-item:hover{background:var(--parchment)}
+.pd-item.oos{opacity:.38;pointer-events:none}
+.pdi-badge{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.pdi-veg{background:#e8f5e8}
+.pdi-nv{background:#fbe8e8}
+.pdi-body{flex:1;min-width:0}
+.pdi-name{font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdi-desc{font-size:10px;color:var(--ink4);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdi-right{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.pdi-price{font-size:12px;font-weight:700;color:var(--gold)}
+.pdi-add{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border2);background:transparent;color:var(--teal);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1;flex-shrink:0}
+.pdi-add:hover{background:var(--teal);color:#fff;border-color:var(--teal)}
+.pd-footer{padding:14px 24px;border-top:1px solid var(--border);background:var(--parchment)}
+.pd-cart-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.pd-cart-txt{font-size:12px;color:var(--ink3)}
+.pd-cart-txt span{font-weight:700;color:var(--teal)}
+.btn-go-order{width:100%;padding:11px;background:var(--teal);color:#fff;border-radius:8px;font-size:13px;font-weight:600;transition:all .18s;letter-spacing:.2px}
+.btn-go-order:hover{background:var(--teal2);transform:translateY(-1px)}
+.btn-go-order:disabled{background:var(--border2);color:var(--ink4);cursor:default;transform:none}
+
+/* ─────────────────────────────── OUTLET PAGE ─── */
+#outletPage{background:var(--cream)}
+.outlet-hero{padding:40px 56px;background:#fff;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:24px}
+.oh-back{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:transparent;color:var(--ink3);display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s;flex-shrink:0}
+.oh-back:hover{border-color:var(--ink3);color:var(--ink);background:var(--parchment)}
+.oh-icon{font-size:36px;flex-shrink:0}
+.oh-name{font-family:'Libre Baskerville',serif;font-size:28px;font-weight:700;color:var(--ink)}
+.oh-cuisine{font-size:12px;color:var(--ink4);margin-top:3px}
+.oh-meta{display:flex;gap:14px;align-items:center;margin-left:auto;flex-wrap:wrap}
+.oh-pill{font-size:11px;padding:5px 13px;border-radius:20px;font-weight:600}
+.outlet-body{display:grid;grid-template-columns:220px 1fr 300px;gap:0;min-height:calc(100vh - 180px)}
+.outlet-sidebar{border-right:1px solid var(--border);padding:24px 0;background:#fff;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.outlet-sidebar::-webkit-scrollbar{width:3px}
+.os-label{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);padding:0 20px;margin-bottom:8px}
+.os-cat{padding:10px 20px;font-size:13px;font-weight:500;color:var(--ink3);cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.os-cat:hover{background:var(--parchment);color:var(--ink2)}
+.os-cat.on{color:var(--teal);border-left-color:var(--teal);background:var(--teal-light);font-weight:600}
+.outlet-menu{padding:28px 32px;background:var(--cream)}
+.menu-cat-section{margin-bottom:36px}
+.mcs-title{font-family:'Libre Baskerville',serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:16px;padding-bottom:10px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:10px}
+.mcs-count{font-size:11px;color:var(--ink4);font-family:'Outfit',sans-serif;font-weight:400}
+.menu-items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.menu-card{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:16px;transition:all .2s;cursor:pointer;position:relative}
+.menu-card:hover{border-color:var(--border2);box-shadow:var(--shadow-sm);transform:translateY(-2px)}
+.menu-card.oos{opacity:.45;pointer-events:none}
+.mc-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+.mc-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.mc-veg{background:#e8f5e8}
+.mc-nv{background:#fbe8e8}
+.mc-name{font-size:14px;font-weight:600;color:var(--ink);line-height:1.3}
+.mc-desc{font-size:11px;color:var(--ink4);margin-top:2px;line-height:1.45}
+.mc-oos-badge{position:absolute;top:10px;right:10px;font-size:9px;padding:2px 7px;border-radius:4px;background:#f0ecec;color:var(--ink4);border:1px solid var(--border);font-weight:600}
+.mc-footer{display:flex;align-items:center;justify-content:space-between}
+.mc-price{font-size:16px;font-weight:700;color:var(--gold)}
+.mc-add{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--teal);background:transparent;color:var(--teal);font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.mc-add:hover{background:var(--teal);color:#fff}
+
+/* CART PANEL */
+.cart-panel{border-left:1px solid var(--border);background:#fff;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;display:flex;flex-direction:column}
+.cart-panel::-webkit-scrollbar{width:3px}
+.cp-header{padding:20px 22px;border-bottom:1px solid var(--border)}
+.cp-title{font-family:'Libre Baskerville',serif;font-size:16px;font-weight:700;color:var(--ink)}
+.cp-empty{padding:40px 22px;text-align:center;color:var(--ink4);font-size:13px;flex:1;display:flex;align-items:center;justify-content:center}
+.cp-items{flex:1;overflow-y:auto;padding:0}
+.cp-items::-webkit-scrollbar{display:none}
+.cart-item{display:flex;align-items:center;gap:10px;padding:12px 22px;border-bottom:1px solid var(--border)}
+.ci-name{flex:1;font-size:12px;font-weight:500;color:var(--ink);min-width:0}
+.ci-name small{display:block;font-size:10px;color:var(--ink4);font-weight:400;margin-top:1px}
+.ci-qty{display:flex;align-items:center;gap:6px}
+.ci-btn{width:22px;height:22px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--ink3);font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1}
+.ci-btn:hover{background:var(--parchment)}
+.ci-n{font-size:12px;font-weight:600;color:var(--ink);min-width:16px;text-align:center}
+.ci-price{font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0}
+.cp-footer{padding:18px 22px;border-top:1.5px solid var(--border);background:var(--parchment)}
+.cp-total-row{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:14px}
+.cp-total-amt{font-family:'Libre Baskerville',serif;font-size:18px;color:var(--gold)}
+.btn-checkout{width:100%;padding:12px;background:var(--teal);color:#fff;border-radius:8px;font-size:13px;font-weight:600;transition:all .18s;letter-spacing:.2px;border:none}
+.btn-checkout:hover{background:var(--teal2);transform:translateY(-1px)}
+.btn-checkout:disabled{background:var(--border2);color:var(--ink4);cursor:default;transform:none}
+
+/* ─────────────────────────────── ORDERS PAGE ─── */
+#ordersPage{background:var(--cream)}
+.orders-hero{padding:40px 56px;background:var(--teal);color:#fff}
+.orders-hero h1{font-family:'Libre Baskerville',serif;font-size:30px;font-weight:400;margin-bottom:6px}
+.orders-hero p{font-size:13px;opacity:.65}
+.orders-body{padding:36px 56px;max-width:1000px;margin:0 auto}
+.ord-section-title{font-family:'Libre Baskerville',serif;font-size:18px;color:var(--ink);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.ost-divider{flex:1;height:1px;background:var(--border)}
+.order-card2{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:20px 24px;margin-bottom:14px;transition:box-shadow .2s}
+.order-card2:hover{box-shadow:var(--shadow-sm)}
+.oc2-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.oc2-ref{font-size:10px;font-weight:700;background:var(--teal-light);color:var(--teal);padding:3px 9px;border-radius:4px;border:1px solid rgba(26,95,90,.2)}
+.oc2-outlet{font-size:12px;color:var(--ink4);font-weight:500}
+.oc2-time{font-size:11px;color:var(--ink4);margin-left:auto}
+.oc2-badge{font-size:10px;padding:4px 10px;border-radius:5px;font-weight:600;border:1px solid}
+.oc2b-recv{background:#eef4fb;color:#2a6db5;border-color:rgba(42,109,181,.2)}
+.oc2b-prep{background:#fef5e7;color:var(--gold);border-color:rgba(180,120,10,.25)}
+.oc2b-ready{background:#e6f4f1;color:var(--teal);border-color:rgba(26,95,90,.25)}
+.oc2b-done{background:#f4f4f4;color:var(--ink4);border-color:var(--border)}
+.oc2-name{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.oc2-items{font-size:12px;color:var(--ink4);margin-bottom:14px}
+.oc2-track{display:flex;align-items:center}
+.otrack{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;position:relative}
+.otrack:not(:last-child)::after{content:'';position:absolute;left:50%;top:6px;width:100%;height:1.5px;background:var(--border);z-index:0}
+.otrack.done::after{background:var(--teal);opacity:.4}
+.otdot{width:13px;height:13px;border-radius:50%;border:2.5px solid var(--border);background:var(--cream);position:relative;z-index:1}
+.otrack.done .otdot{border-color:var(--teal);background:var(--teal)}
+.otrack.now .otdot{border-color:var(--teal);box-shadow:0 0 0 4px rgba(26,95,90,.15);background:#fff}
+.otlbl{font-size:9px;color:var(--ink4);letter-spacing:.2px;white-space:nowrap}
+.otrack.done .otlbl{color:var(--teal);font-weight:500}
+.otrack.now .otlbl{color:var(--teal);font-weight:600}
+.oc2-total{font-size:13px;font-weight:700;color:var(--gold);margin-top:12px;text-align:right}
+
+/* ─────────────────────────────── STAFF PAGES ─── */
+#staffPage{background:var(--cream)}
+.staff-banner{padding:28px 56px;background:var(--ink2);color:#fff;display:flex;align-items:center;gap:20px}
+.sb-title{font-family:'Libre Baskerville',serif;font-size:26px;font-weight:400}
+.sb-outlet{font-size:13px;opacity:.55;margin-top:2px}
+.sb-toggle-wrap{margin-left:auto;display:flex;align-items:center;gap:10px}
+.sb-toggle-lbl{font-size:12px;opacity:.65}
+.toggle-sw{position:relative;width:44px;height:24px;cursor:pointer}
+.toggle-sw input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;border-radius:24px;background:rgba(255,255,255,.2);transition:background .2s}
+.toggle-track::after{content:'';position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s}
+.toggle-sw input:checked+.toggle-track{background:var(--teal2)}
+.toggle-sw input:checked+.toggle-track::after{transform:translateX(20px)}
+.staff-tabs-bar{background:#fff;border-bottom:1px solid var(--border);padding:0 56px;display:flex}
+.staff-tab{padding:14px 20px;font-size:12px;font-weight:500;color:var(--ink4);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .18s}
+.staff-tab:hover{color:var(--ink2)}
+.staff-tab.on{color:var(--teal);border-bottom-color:var(--teal)}
+.staff-main{padding:36px 56px;max-width:1200px;margin:0 auto}
+.staff-tab-content{display:none}
+.staff-tab-content.on{display:block;animation:fadeUp .28s ease both}
+
+/* STAT ROW */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.scard{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:18px 20px;position:relative;overflow:hidden}
+.scard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.sc-g::before{background:var(--gold)}
+.sc-t::before{background:var(--teal)}
+.sc-b::before{background:#2a6db5}
+.sc-a::before{background:#c05030}
+.scard-lbl{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);margin-bottom:7px}
+.scard-num{font-family:'Libre Baskerville',serif;font-size:34px;color:var(--ink);line-height:1}
+.scard-sub{font-size:10px;color:var(--ink4);margin-top:5px}
+
+/* SECTION DIVIDER */
+.sdiv{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);display:flex;align-items:center;gap:10px;margin:0 0 14px}
+.sdiv::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* TICKETS */
+.tickets-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.ticket{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;transition:border-color .2s}
+.ticket:hover{border-color:var(--border2)}
+.tk-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.tk-ref{font-size:10px;font-weight:700;background:var(--teal-light);color:var(--teal);padding:2px 8px;border-radius:4px;border:1px solid rgba(26,95,90,.2)}
+.tk-cust{font-size:13px;font-weight:600;color:var(--ink)}
+.tk-time{margin-left:auto;font-size:10px;color:var(--ink4)}
+.tk-items{font-size:11px;color:var(--ink4);margin-bottom:5px;line-height:1.5}
+.tk-amt{font-size:12px;font-weight:700;color:var(--gold);margin-bottom:11px}
+.tk-btns{display:flex;gap:7px}
+.tkbtn{padding:6px 14px;border-radius:6px;font-size:11px;font-weight:600;transition:all .18s;border:1.5px solid}
+.tkbtn-acc{background:var(--teal-light);color:var(--teal);border-color:rgba(26,95,90,.25)}
+.tkbtn-acc:hover{background:var(--teal);color:#fff}
+.tkbtn-dec{background:#f4f4f4;color:var(--ink4);border-color:var(--border)}
+.tkbtn-next{background:#fef5e7;color:var(--gold);border-color:rgba(180,120,10,.25)}
+.tkbtn-next:hover{background:var(--gold);color:#fff}
+.tkbtn-done{background:#e6f4f1;color:var(--teal);border-color:rgba(26,95,90,.2)}
+.tkbtn-done:hover{background:var(--teal);color:#fff}
+
+/* IN-PROGRESS */
+.ipcard{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:10px}
+.ip-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin:10px 0 8px}
+.ip-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--teal),var(--teal2));transition:width .5s}
+.ip-steps{display:flex;justify-content:space-between}
+.ips{font-size:9px;color:var(--ink4);letter-spacing:.3px}
+.ips.done{color:var(--teal);font-weight:500}
+.ips.now{color:var(--gold);font-weight:600}
+
+/* MENU MGMT TABLE */
+.mmtable{background:#fff;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.mmt-hdr{display:grid;grid-template-columns:1fr 90px 80px 90px 80px;gap:8px;padding:11px 18px;background:var(--parchment);font-size:9px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--ink4)}
+.mmt-row{display:grid;grid-template-columns:1fr 90px 80px 90px 80px;gap:8px;padding:13px 18px;border-top:1px solid var(--border);align-items:center;transition:background .14s}
+.mmt-row:hover{background:var(--parchment)}
+.mmr-name{font-size:13px;font-weight:600;color:var(--ink)}
+.mmr-cat{font-size:10px;color:var(--ink4);margin-top:1px}
+.mmr-price{font-size:13px;font-weight:700;color:var(--gold)}
+.tog-wr{display:flex;align-items:center;gap:5px}
+.tog2{width:32px;height:17px;border-radius:10px;background:var(--border2);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;border:1px solid var(--border)}
+.tog2.on{background:var(--teal)}
+.tog2::after{content:'';position:absolute;left:2px;top:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .2s}
+.tog2.on::after{transform:translateX(15px)}
+.tog2-lbl{font-size:10px;color:var(--ink4);min-width:24px}
+.tog2.on+.tog2-lbl{color:var(--teal);font-weight:500}
+.mmr-btns{display:flex;gap:5px}
+.mmr-btn{padding:4px 10px;border-radius:5px;font-size:10px;font-weight:600;border:1px solid var(--border);color:var(--ink3);background:transparent;transition:all .15s}
+.mmr-btn:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-light)}
+.mmr-btn.del:hover{border-color:var(--rust);color:var(--rust);background:#fbe8e8}
+
+/* REPORTS */
+.report-2col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.rpt-table{background:#fff;border:1.5px solid var(--border);border-radius:10px;overflow:hidden}
+.rpt-hdr{display:grid;gap:8px;padding:11px 18px;background:var(--parchment);font-size:9px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--ink4)}
+.rpt-row{display:grid;gap:8px;padding:12px 18px;border-top:1px solid var(--border);align-items:center}
+.rrt-name{font-size:12px;font-weight:600;color:var(--ink)}
+.rrt-cat{font-size:10px;color:var(--ink4)}
+.rrt-num{font-size:12px;font-weight:600;color:var(--ink2)}
+.rrt-rev{font-size:13px;font-weight:700;color:var(--gold)}
+.bar-chart-row{height:10px;background:var(--parchment);border-radius:5px;overflow:hidden}
+.bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--teal),var(--teal2))}
+
+/* ─────────────────────────────── MODALS ─── */
+.modal-ov{position:fixed;inset:0;z-index:1000;background:rgba(28,24,18,.5);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-ov.open{display:flex}
+.modal-box{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:30px;width:100%;max-width:460px;animation:fadeUp .22s ease both;box-shadow:var(--shadow-lg)}
+.modal-title{font-family:'Libre Baskerville',serif;font-size:20px;color:var(--ink);margin-bottom:18px;display:flex;align-items:center;justify-content:space-between}
+.modal-close{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);background:transparent;color:var(--ink4);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s}
+.modal-close:hover{border-color:var(--ink3);color:var(--ink)}
+.modal-form{display:flex;flex-direction:column;gap:14px}
+.mf-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mf-btns{display:flex;gap:10px;margin-top:4px}
+.btn-cancel{flex:0;padding:10px 20px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--ink3);font-size:12px;font-weight:600}
+.btn-save{flex:1;padding:10px;border-radius:8px;background:var(--teal);color:#fff;font-size:13px;font-weight:600;border:none;transition:all .18s}
+.btn-save:hover{background:var(--teal2)}
+
+/* ORDER CONFIRM MODAL */
+.confirm-items{background:var(--parchment);border-radius:8px;padding:14px 16px;margin-bottom:16px}
+.confirm-item-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;color:var(--ink3)}
+.confirm-total-row{display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--ink);border-top:1px solid var(--border);margin-top:8px;padding-top:8px}
+
+/* ─────────────────────────────── TOAST ─── */
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:2000;background:var(--ink);color:var(--cream);border-radius:8px;padding:11px 22px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow-lg)}
+#toast.show{opacity:1}
+
+/* ─────────────────────────────── RESPONSIVE ─── */
+@media(max-width:1024px){
+  #loginPage{grid-template-columns:1fr}
+  .login-left{display:none}
+  .outlet-body{grid-template-columns:1fr;grid-template-rows:auto 1fr auto}
+  .outlet-sidebar{display:none}
+  .cart-panel{position:fixed;right:0;top:56px;bottom:0;width:300px;transform:translateX(100%);transition:transform .3s;z-index:100}
+  .cart-panel.open{transform:none}
+  .stat-row{grid-template-columns:1fr 1fr}
+  .tickets-row{grid-template-columns:1fr}
+  .report-2col{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .home-hero,.orders-hero,.orders-body,.staff-banner,.staff-tabs-bar,.staff-main,.tab-section{padding-left:24px;padding-right:24px}
+  .home-subnav{padding:0 24px}
+  .outlet-hero,.outlet-menu{padding:24px}
+  .hh-grid{grid-template-columns:1fr}
+  .hh-helm{display:none}
+  .stat-row{grid-template-columns:1fr 1fr}
+  .mmt-hdr,.mmt-row{grid-template-columns:1fr 70px 65px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════ TOPBAR ══════════ -->
+<nav class="topbar" id="topbar">
+  <a class="tb-logo" onclick="navigate('home')" style="cursor:pointer;text-decoration:none">
+    <svg class="tb-helm" width="26" height="26" viewBox="0 0 52 52" fill="none">
+      <circle cx="26" cy="26" r="6" stroke="#1a5f5a" stroke-width="2.2"/>
+      <circle cx="26" cy="26" r="15" stroke="rgba(26,95,90,0.3)" stroke-width="1.2"/>
+      <line x1="26" y1="11" x2="26" y2="4" stroke="#1a5f5a" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="26" y1="48" x2="26" y2="41" stroke="#1a5f5a" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="41" y1="26" x2="48" y2="26" stroke="#1a5f5a" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="4" y1="26" x2="11" y2="26" stroke="#1a5f5a" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="36.6" y1="15.4" x2="41.6" y2="10.4" stroke="#1a5f5a" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="10.4" y1="41.6" x2="15.4" y2="36.6" stroke="#1a5f5a" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="36.6" y1="36.6" x2="41.6" y2="41.6" stroke="#1a5f5a" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="10.4" y1="10.4" x2="15.4" y2="15.4" stroke="#1a5f5a" stroke-width="2.2" stroke-linecap="round"/>
+    </svg>
+    <div><div class="tb-name">The Hungry Helm</div><div class="tb-sub">Bennett University</div></div>
+  </a>
+  <div class="tb-right" id="tbRight">
+    <button class="tb-btn gold" onclick="navigate('login')">Log In</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════ LOGIN PAGE ══════════════════════════════════ -->
+<div id="loginPage" class="page active" style="display:grid">
+  <div class="login-left">
+    <div class="ll-texture"></div>
+    <div class="ll-content">
+      <div class="ll-eyebrow">Campus Food Navigation</div>
+      <h1 class="ll-title">Navigate<br>your <em>hunger.</em></h1>
+      <p class="ll-desc">Order from five campus food outlets, track in real-time, and never miss a meal between lectures at Bennett University.</p>
+      <div class="ll-helm">
+        <svg width="110" height="110" viewBox="0 0 110 110" fill="none">
+          <g class="helm-anim" style="transform-origin:55px 55px">
+            <circle cx="55" cy="55" r="12" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+            <circle cx="55" cy="55" r="8" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <circle cx="55" cy="55" r="34" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-dasharray="4 6"/>
+            <line x1="55" y1="43" x2="55" y2="14" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="55" cy="12" r="5" fill="rgba(255,255,255,0.7)"/>
+            <line x1="55" y1="67" x2="55" y2="96" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="55" cy="98" r="5" fill="rgba(255,255,255,0.7)"/>
+            <line x1="67" y1="55" x2="96" y2="55" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="98" cy="55" r="5" fill="rgba(255,255,255,0.7)"/>
+            <line x1="43" y1="55" x2="14" y2="55" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="12" cy="55" r="5" fill="rgba(255,255,255,0.7)"/>
+            <line x1="63.5" y1="46.5" x2="83.5" y2="26.5" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="85" cy="25" r="5" fill="rgba(255,255,255,0.7)"/>
+            <line x1="46.5" y1="63.5" x2="26.5" y2="83.5" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="25" cy="85" r="5" fill="rgba(255,255,255,0.7)"/>
+            <line x1="63.5" y1="63.5" x2="83.5" y2="83.5" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="85" cy="85" r="5" fill="rgba(255,255,255,0.7)"/>
+            <line x1="46.5" y1="46.5" x2="26.5" y2="26.5" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="25" cy="25" r="5" fill="rgba(255,255,255,0.7)"/>
+            <circle cx="55" cy="55" r="6" fill="rgba(255,255,255,0.8)"/>
+            <circle cx="55" cy="55" r="3" fill="#1a5f5a"/>
+          </g>
+        </svg>
+      </div>
+      <div class="ll-stats">
+        <div class="llstat"><div class="llstat-n">5</div><div class="llstat-l">Outlets</div></div>
+        <div class="llstat"><div class="llstat-n">120+</div><div class="llstat-l">Items</div></div>
+        <div class="llstat"><div class="llstat-n">~10m</div><div class="llstat-l">Avg wait</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="login-right">
+    <div class="lr-title">Welcome aboard</div>
+    <div class="lr-sub">Sign in to start your voyage</div>
+    <div class="login-tabs">
+      <div class="ltab on" onclick="switchLoginTab('student')">Student</div>
+      <div class="ltab" onclick="switchLoginTab('staff')">Staff</div>
+    </div>
+    <div id="studentForm" class="lform">
+      <div class="lform-group"><label>College Email</label>
+        <input class="lform-input" id="sEmail" type="email" placeholder="yourname@bennett.edu.in" value="aryan.sharma@bennett.edu.in">
+        <div class="lform-hint">Only @bennett.edu.in addresses</div>
+      </div>
+      <div class="lform-group"><label>Password</label>
+        <input class="lform-input" id="sPass" type="password" placeholder="••••••••" value="password">
+      </div>
+      <button class="btn-submit btn-student" onclick="loginStudent()">Set Sail as Student →</button>
+    </div>
+    <div id="staffForm" class="lform" style="display:none">
+      <div class="lform-group"><label>Your Outlet</label>
+        <select class="lform-select" id="staffOutletSel">
+          <option value="ik">Infinity Kitchens</option>
+          <option value="hc">House of Chow</option>
+          <option value="ss">Southern Stories</option>
+          <option value="sn">Snapeats</option>
+          <option value="hs">Hotspot</option>
+        </select>
+      </div>
+      <div class="lform-group"><label>Staff ID</label>
+        <input class="lform-input" id="staffId" placeholder="IK-STAFF-001" value="IK-STAFF-001">
+      </div>
+      <div class="lform-group"><label>Password</label>
+        <input class="lform-input" id="staffPass" type="password" placeholder="••••••••" value="password">
+      </div>
+      <button class="btn-submit btn-staff" onclick="loginStaff()">Enter Staff Port →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ STUDENT HOME ══════════════════════════════════ -->
+<div id="homePage" class="page">
+  <div class="home-hero">
+    <div class="hh-grid">
+      <div>
+        <div class="hh-eyebrow" id="heroDate">Friday · 3 ports open</div>
+        <h2 class="hh-title">Good afternoon, <em id="heroName">Aryan.</em></h2>
+        <p class="hh-sub">Where are we navigating today?</p>
+        <div class="hh-stats">
+          <div class="hstat"><div class="hstat-n" id="heroActiveCount">0</div><div class="hstat-l">Active Orders</div></div>
+          <div class="hstat"><div class="hstat-n" id="heroSpent">₹0</div><div class="hstat-l">Spent Today</div></div>
+          <div class="hstat"><div class="hstat-n">3</div><div class="hstat-l">Open Ports</div></div>
+        </div>
+      </div>
+      <div class="hh-helm" id="heroHelmDiv">
+        <div class="hh-helm-ring"></div>
+        <svg class="hh-helm-svg" id="homeHelmSvg" viewBox="0 0 96 96" fill="none">
+          <g id="homeHelmG" style="transform-origin:48px 48px">
+            <circle cx="48" cy="48" r="11" stroke="rgba(255,255,255,0.45)" stroke-width="2"/>
+            <circle cx="48" cy="48" r="7.5" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.22)" stroke-width="1"/>
+            <circle cx="48" cy="48" r="29" stroke="rgba(255,255,255,0.1)" stroke-width="1.2" stroke-dasharray="3 5"/>
+            <line x1="48" y1="37" x2="48" y2="11" stroke="rgba(255,255,255,0.7)" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="48" cy="9" r="4" fill="rgba(255,255,255,0.7)"/>
+            <line x1="48" y1="59" x2="48" y2="85" stroke="rgba(255,255,255,0.7)" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="48" cy="87" r="4" fill="rgba(255,255,255,0.7)"/>
+            <line x1="59" y1="48" x2="85" y2="48" stroke="rgba(255,255,255,0.7)" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="87" cy="48" r="4" fill="rgba(255,255,255,0.7)"/>
+            <line x1="37" y1="48" x2="11" y2="48" stroke="rgba(255,255,255,0.7)" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="9" cy="48" r="4" fill="rgba(255,255,255,0.7)"/>
+            <line x1="55.5" y1="40.5" x2="72.5" y2="23.5" stroke="rgba(255,255,255,0.7)" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="74" cy="22" r="4" fill="rgba(255,255,255,0.7)"/>
+            <line x1="40.5" y1="55.5" x2="23.5" y2="72.5" stroke="rgba(255,255,255,0.7)" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="22" cy="74" r="4" fill="rgba(255,255,255,0.7)"/>
+            <line x1="55.5" y1="55.5" x2="72.5" y2="72.5" stroke="rgba(255,255,255,0.7)" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="74" cy="74" r="4" fill="rgba(255,255,255,0.7)"/>
+            <line x1="40.5" y1="40.5" x2="23.5" y2="23.5" stroke="rgba(255,255,255,0.7)" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="22" cy="22" r="4" fill="rgba(255,255,255,0.7)"/>
+            <circle cx="48" cy="48" r="5" fill="rgba(255,255,255,0.8)"/>
+            <circle cx="48" cy="48" r="2.5" fill="#1a5f5a"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="home-subnav">
+    <div class="snav-item on" onclick="switchHomeTab('ports')">Chart the Ports</div>
+    <div class="snav-item" onclick="switchHomeTab('orders')">My Orders</div>
+    <div class="snav-item" onclick="switchHomeTab('history')">Voyage Log</div>
+  </div>
+
+  <!-- PORTS TAB: THE NAUTICAL CHART -->
+  <div id="htab-ports" class="tab-section on">
+    <div style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-family:'Libre Baskerville',serif;font-size:20px;color:var(--ink);margin-bottom:3px">Nautical Chart</div>
+        <div style="font-size:12px;color:var(--ink4)">Select a port to view its menu and place an order</div>
+      </div>
+      <div style="font-size:11px;color:var(--ink4);background:var(--parchment);padding:6px 14px;border-radius:20px;border:1px solid var(--border)">Click any port marker to explore →</div>
+    </div>
+    <div class="chart-wrap" id="chartWrap">
+      <div class="chart-bg"></div>
+      <div class="chart-grid"></div>
+      <div class="chart-title">Bennett Campus Food Chart</div>
+      <div class="chart-rule"></div>
+
+      <!-- SVG routes between ports -->
+      <svg class="chart-route" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path d="M 20 35 Q 38 20 52 28" stroke="rgba(26,95,90,0.12)" stroke-width="0.4" fill="none" stroke-dasharray="2 3"/>
+        <path d="M 52 28 Q 68 22 76 38" stroke="rgba(26,95,90,0.12)" stroke-width="0.4" fill="none" stroke-dasharray="2 3"/>
+        <path d="M 20 35 Q 22 58 30 72" stroke="rgba(26,95,90,0.12)" stroke-width="0.4" fill="none" stroke-dasharray="2 3"/>
+        <path d="M 30 72 Q 52 82 70 68" stroke="rgba(26,95,90,0.12)" stroke-width="0.4" fill="none" stroke-dasharray="2 3"/>
+        <path d="M 70 68 Q 78 55 76 38" stroke="rgba(26,95,90,0.12)" stroke-width="0.4" fill="none" stroke-dasharray="2 3"/>
+      </svg>
+
+      <!-- Compass rose -->
+      <svg class="chart-compass" viewBox="0 0 70 70" fill="none">
+        <circle cx="35" cy="35" r="32" stroke="rgba(28,24,18,.5)" stroke-width="1"/>
+        <line x1="35" y1="4" x2="35" y2="66" stroke="rgba(28,24,18,.4)" stroke-width="0.8"/>
+        <line x1="4" y1="35" x2="66" y2="35" stroke="rgba(28,24,18,.4)" stroke-width="0.8"/>
+        <text x="35" y="14" text-anchor="middle" font-size="8" fill="rgba(28,24,18,.6)" font-family="Libre Baskerville, serif" font-weight="700">N</text>
+        <text x="60" y="38" text-anchor="middle" font-size="7" fill="rgba(28,24,18,.5)" font-family="Libre Baskerville, serif">E</text>
+        <text x="35" y="62" text-anchor="middle" font-size="7" fill="rgba(28,24,18,.5)" font-family="Libre Baskerville, serif">S</text>
+        <text x="10" y="38" text-anchor="middle" font-size="7" fill="rgba(28,24,18,.5)" font-family="Libre Baskerville, serif">W</text>
+      </svg>
+
+      <!-- Port markers -->
+      <div class="chart-ports" id="chartPorts"></div>
+
+      <!-- Port drawer (slides in from right of chart) -->
+      <div class="port-drawer" id="portDrawer">
+        <div class="pd-header">
+          <div class="pd-icon" id="pdIcon"></div>
+          <div><div class="pd-name" id="pdName"></div><div class="pd-cuisine" id="pdCuisine"></div></div>
+          <button class="pd-close" onclick="closeDrawer()">✕</button>
+        </div>
+        <div class="pd-meta">
+          <div class="pdm-item">⏱ <span class="pdm-val" id="pdWait"></span></div>
+          <div class="pdm-item" id="pdStatusItem"></div>
+        </div>
+        <div class="pd-cats" id="pdCats"></div>
+        <div class="pd-items" id="pdItems"></div>
+        <div class="pd-footer">
+          <div class="pd-cart-row">
+            <span class="pd-cart-txt">Cart: <span id="drawerCart">empty</span></span>
+          </div>
+          <button class="btn-go-order" id="btnGoToOrder" onclick="goToOutletPage()" disabled>Browse Full Menu →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDERS TAB -->
+  <div id="htab-orders" class="tab-section">
+    <div id="homeOrdersList"></div>
+  </div>
+
+  <!-- HISTORY TAB -->
+  <div id="htab-history" class="tab-section">
+    <div id="homeHistoryList"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ OUTLET PAGE ══════════════════════════════════ -->
+<div id="outletPage" class="page">
+  <div class="outlet-hero">
+    <button class="oh-back" onclick="navigate('home')">←</button>
+    <div class="oh-icon" id="ohIcon"></div>
+    <div>
+      <div class="oh-name" id="ohName"></div>
+      <div class="oh-cuisine" id="ohCuisine"></div>
+    </div>
+    <div class="oh-meta" id="ohMeta"></div>
+  </div>
+  <div class="outlet-body">
+    <div class="outlet-sidebar" id="outletSidebar"></div>
+    <div class="outlet-menu" id="outletMenu"></div>
+    <div class="cart-panel" id="cartPanel">
+      <div class="cp-header">
+        <div class="cp-title">Your Cart</div>
+      </div>
+      <div id="cartItemsEl"></div>
+      <div class="cp-footer" id="cartFooter" style="display:none">
+        <div class="cp-total-row">
+          <span>Total</span>
+          <span class="cp-total-amt" id="cartTotal">₹0</span>
+        </div>
+        <button class="btn-checkout" id="btnCheckout" onclick="openOrderConfirm()">Checkout →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ ORDERS PAGE ══════════════════════════════════ -->
+<div id="ordersPage" class="page">
+  <div class="orders-hero">
+    <div style="display:flex;align-items:center;gap:14px">
+      <button style="width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);background:transparent;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center" onclick="navigate('home')">←</button>
+      <div>
+        <h1 class="orders-hero h1" style="font-family:'Libre Baskerville',serif;font-size:28px;font-weight:400;color:#fff">My Orders</h1>
+        <p style="font-size:13px;color:rgba(255,255,255,.6);margin-top:3px">Track your current voyage</p>
+      </div>
+    </div>
+  </div>
+  <div class="orders-body">
+    <div class="ord-section-title">Active <div class="ost-divider"></div></div>
+    <div id="ordersActiveList"></div>
+    <div class="ord-section-title" style="margin-top:28px">Completed <div class="ost-divider"></div></div>
+    <div id="ordersCompletedList">
+      <div class="order-card2">
+        <div class="oc2-top">
+          <div class="oc2-ref">#039</div>
+          <div class="oc2-outlet">Southern Stories</div>
+          <div class="oc2-time">Yesterday 1:15 PM</div>
+          <div class="oc2-badge oc2b-done">Done</div>
+        </div>
+        <div class="oc2-name">Masala Dosa</div>
+        <div class="oc2-items">1 item · ₹70</div>
+        <div class="oc2-track">
+          <div class="otrack done"><div class="otdot"></div><div class="otlbl">Received</div></div>
+          <div class="otrack done"><div class="otdot"></div><div class="otlbl">Preparing</div></div>
+          <div class="otrack done"><div class="otdot"></div><div class="otlbl">Ready</div></div>
+          <div class="otrack done"><div class="otdot"></div><div class="otlbl">Done</div></div>
+        </div>
+        <div class="oc2-total">₹70</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ STAFF PAGE ══════════════════════════════════ -->
+<div id="staffPage" class="page">
+  <div class="staff-banner">
+    <div>
+      <div class="sb-title" id="sbTitle">Infinity Kitchens</div>
+      <div class="sb-outlet">Staff Dashboard · Live Operations</div>
+    </div>
+    <div class="sb-toggle-wrap">
+      <span class="sb-toggle-lbl">Port Status:</span>
+      <label class="toggle-sw">
+        <input type="checkbox" id="outletToggle" checked onchange="toggleOutletStatus(this)">
+        <div class="toggle-track"></div>
+      </label>
+      <span class="tb-pill tp-online" id="portStatusPill">OPEN</span>
+    </div>
+  </div>
+  <div class="staff-tabs-bar">
+    <div class="staff-tab on" onclick="switchStaffTab('orders')">Live Orders</div>
+    <div class="staff-tab" onclick="switchStaffTab('menu')">Menu Manifest</div>
+    <div class="staff-tab" onclick="switchStaffTab('reports')">Reports</div>
+  </div>
+  <div class="staff-main">
+    <!-- ORDERS -->
+    <div id="stc-orders" class="staff-tab-content on">
+      <div class="stat-row">
+        <div class="scard sc-g"><div class="scard-lbl">Incoming</div><div class="scard-num" id="sc-inc">2</div><div class="scard-sub">awaiting accept</div></div>
+        <div class="scard sc-b"><div class="scard-lbl">Preparing</div><div class="scard-num" id="sc-prep">2</div><div class="scard-sub">in the galley</div></div>
+        <div class="scard sc-t"><div class="scard-lbl">Ready</div><div class="scard-num" id="sc-ready">1</div><div class="scard-sub">pickup pending</div></div>
+        <div class="scard sc-a"><div class="scard-lbl">Today</div><div class="scard-num" id="sc-done">47</div><div class="scard-sub">completed orders</div></div>
+      </div>
+      <div class="sdiv">Incoming Queue</div>
+      <div class="tickets-row" id="staffIncoming"></div>
+      <div class="sdiv" style="margin-top:20px">In Progress</div>
+      <div id="staffInProgress"></div>
+    </div>
+    <!-- MENU -->
+    <div id="stc-menu" class="staff-tab-content">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+        <div class="sdiv" style="flex:1;margin-bottom:0">Menu Manifest</div>
+        <button style="padding:9px 18px;background:var(--teal);color:#fff;border-radius:8px;font-size:12px;font-weight:600;border:none;margin-left:16px;transition:all .18s" onmouseenter="this.style.background=vars['--teal2']" onmouseleave="this.style.background=vars['--teal']" onclick="openAddModal()">+ Add Item</button>
+      </div>
+      <div id="staffMenuTable"></div>
+    </div>
+    <!-- REPORTS -->
+    <div id="stc-reports" class="staff-tab-content">
+      <div class="stat-row">
+        <div class="scard sc-g"><div class="scard-lbl">Revenue</div><div class="scard-num">₹8,240</div><div class="scard-sub">+12% vs yesterday</div></div>
+        <div class="scard sc-a"><div class="scard-lbl">Orders</div><div class="scard-num">47</div><div class="scard-sub">avg ₹175 / order</div></div>
+        <div class="scard sc-t"><div class="scard-lbl">Avg Wait</div><div class="scard-num">14m</div><div class="scard-sub">target &lt;18m</div></div>
+        <div class="scard sc-b"><div class="scard-lbl">Rating</div><div class="scard-num">4.6</div><div class="scard-sub">23 reviews today</div></div>
+      </div>
+      <div class="report-2col">
+        <div>
+          <div class="sdiv">Top Items</div>
+          <div class="rpt-table">
+            <div class="rpt-hdr" style="grid-template-columns:1fr 60px 80px"><div>Item</div><div>Orders</div><div>Revenue</div></div>
+            <div class="rpt-row" style="grid-template-columns:1fr 60px 80px"><div><div class="rrt-name">Butter Chicken</div><div class="rrt-cat">Mains</div></div><div class="rrt-num">18</div><div class="rrt-rev">₹2,700</div></div>
+            <div class="rpt-row" style="grid-template-columns:1fr 60px 80px"><div><div class="rrt-name">Chicken Biryani</div><div class="rrt-cat">Rice</div></div><div class="rrt-num">12</div><div class="rrt-rev">₹2,100</div></div>
+            <div class="rpt-row" style="grid-template-columns:1fr 60px 80px"><div><div class="rrt-name">Dal Makhani</div><div class="rrt-cat">Mains</div></div><div class="rrt-num">10</div><div class="rrt-rev">₹1,100</div></div>
+            <div class="rpt-row" style="grid-template-columns:1fr 60px 80px"><div><div class="rrt-name">Masala Chai</div><div class="rrt-cat">Drinks</div></div><div class="rrt-num">32</div><div class="rrt-rev">₹640</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="sdiv">Peak Hours</div>
+          <div class="rpt-table">
+            <div class="rpt-hdr" style="grid-template-columns:70px 1fr 70px"><div>Hour</div><div>Volume</div><div>Revenue</div></div>
+            <div class="rpt-row" style="grid-template-columns:70px 1fr 70px"><div style="font-size:12px">12 PM</div><div><div class="bar-chart-row"><div class="bar-fill" style="width:90%"></div></div></div><div class="rrt-rev">₹2,100</div></div>
+            <div class="rpt-row" style="grid-template-columns:70px 1fr 70px"><div style="font-size:12px">1 PM</div><div><div class="bar-chart-row"><div class="bar-fill" style="width:75%"></div></div></div><div class="rrt-rev">₹1,750</div></div>
+            <div class="rpt-row" style="grid-template-columns:70px 1fr 70px"><div style="font-size:12px">2 PM</div><div><div class="bar-chart-row"><div class="bar-fill" style="width:55%"></div></div></div><div class="rrt-rev">₹1,280</div></div>
+            <div class="rpt-row" style="grid-template-columns:70px 1fr 70px"><div style="font-size:12px">4 PM</div><div><div class="bar-chart-row"><div class="bar-fill" style="width:38%"></div></div></div><div class="rrt-rev">₹880</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD ITEM MODAL -->
+<div class="modal-ov" id="addItemModal">
+  <div class="modal-box">
+    <div class="modal-title">Add Menu Item <button class="modal-close" onclick="closeModal('addItemModal')">✕</button></div>
+    <div class="modal-form">
+      <div class="lform-group"><label>Item Name</label><input class="lform-input" id="newName" placeholder="e.g. Butter Chicken"></div>
+      <div class="mf-row">
+        <div class="lform-group"><label>Category</label>
+          <select class="lform-select" id="newCat"><option>Mains</option><option>Rice</option><option>Breads</option><option>Noodles</option><option>Dosas</option><option>Snacks</option><option>Drinks</option></select>
+        </div>
+        <div class="lform-group"><label>Price ₹</label><input class="lform-input" type="number" id="newPrice" placeholder="150"></div>
+      </div>
+      <div class="lform-group"><label>Description</label><input class="lform-input" id="newDesc" placeholder="Brief description…"></div>
+      <div class="mf-row">
+        <div class="lform-group"><label>Type</label>
+          <select class="lform-select" id="newType"><option value="veg">Vegetarian</option><option value="nonveg">Non-Veg</option></select>
+        </div>
+        <div class="lform-group"><label>Availability</label>
+          <select class="lform-select" id="newStock"><option value="1">In Stock</option><option value="0">Out of Stock</option></select>
+        </div>
+      </div>
+      <div class="mf-btns">
+        <button class="btn-cancel" onclick="closeModal('addItemModal')">Cancel</button>
+        <button class="btn-save" onclick="addMenuItem()">Add to Manifest</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER CONFIRM MODAL -->
+<div class="modal-ov" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-title">Confirm Order <button class="modal-close" onclick="closeModal('confirmModal')">✕</button></div>
+    <div id="confirmItems" class="confirm-items"></div>
+    <div id="confirmTotal" class="confirm-total-row" style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;margin-bottom:18px"></div>
+    <div class="mf-btns">
+      <button class="btn-cancel" onclick="closeModal('confirmModal')">Cancel</button>
+      <button class="btn-save" onclick="confirmOrder()">Place Order ⚓</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════ DATA ═══════════════
+const OUTLETS = [
+  {id:'ik',name:'Infinity Kitchens',icon:'🍛',cuisine:'North Indian · Thalis · Curries',wait:'15–20 min',status:'open',
+   color:'#e8f5e8',dotColor:'#2d7a2d',
+   pos:{left:'20%',top:'35%'},
+   cats:['All','Mains','Rice','Breads','Drinks'],
+   items:[
+     {id:'ik1',n:'Butter Chicken',d:'Tomato cream gravy, tender chicken',p:150,c:'Mains',v:false,stock:true},
+     {id:'ik2',n:'Dal Makhani',d:'Overnight slow-cooked black lentils',p:110,c:'Mains',v:true,stock:true},
+     {id:'ik3',n:'Paneer Butter Masala',d:'Cottage cheese in aromatic tomato gravy',p:130,c:'Mains',v:true,stock:true},
+     {id:'ik4',n:'Shahi Paneer',d:'Rich cashew-cream gravy, saffron',p:140,c:'Mains',v:true,stock:false},
+     {id:'ik5',n:'Chicken Biryani',d:'Dum-cooked basmati, whole spices',p:175,c:'Rice',v:false,stock:true},
+     {id:'ik6',n:'Veg Biryani',d:'Garden vegetables, aromatic dum rice',p:130,c:'Rice',v:true,stock:true},
+     {id:'ik7',n:'Jeera Rice',d:'Cumin-tempered basmati',p:60,c:'Rice',v:true,stock:true},
+     {id:'ik8',n:'Butter Naan',d:'Tandoor-baked, fresh butter',p:15,c:'Breads',v:true,stock:true},
+     {id:'ik9',n:'Laccha Paratha',d:'Layered whole-wheat, ghee-finished',p:20,c:'Breads',v:true,stock:true},
+     {id:'ik10',n:'Masala Chai',d:'Ginger, cardamom, strong brew',p:20,c:'Drinks',v:true,stock:true},
+   ]},
+  {id:'hc',name:'House of Chow',icon:'🍜',cuisine:'Chinese · Noodles · Fried Rice',wait:'10–15 min',status:'open',
+   color:'#fef5e7',dotColor:'#b8860b',
+   pos:{left:'52%',top:'28%'},
+   cats:['All','Noodles','Rice','Soups','Sides'],
+   items:[
+     {id:'hc1',n:'Veg Hakka Noodles',d:'Stir-fried, chilli-soy toss',p:90,c:'Noodles',v:true,stock:true},
+     {id:'hc2',n:'Chicken Chow Mein',d:'Wok-tossed, scallions, dark soy',p:120,c:'Noodles',v:false,stock:true},
+     {id:'hc3',n:'Schezwan Noodles',d:'Fiery Schezwan sauce, loaded veggies',p:100,c:'Noodles',v:true,stock:true},
+     {id:'hc4',n:'Fried Rice',d:'Egg fried, seasonal vegetables',p:95,c:'Rice',v:true,stock:true},
+     {id:'hc5',n:'Chicken Fried Rice',d:'Wok-tossed chicken, scallions',p:120,c:'Rice',v:false,stock:true},
+     {id:'hc6',n:'Manchow Soup',d:'Thick spiced broth, crispy noodles',p:60,c:'Soups',v:true,stock:true},
+     {id:'hc7',n:'Spring Rolls (3)',d:'Crispy, spiced vegetable filling',p:70,c:'Sides',v:true,stock:true},
+     {id:'hc8',n:'Veg Momos (6)',d:'Steamed dumplings, chilli dip',p:80,c:'Sides',v:true,stock:true},
+   ]},
+  {id:'ss',name:'Southern Stories',icon:'🌶️',cuisine:'South Indian · Dosas · Idli',wait:'20–25 min',status:'busy',
+   color:'#fce8e8',dotColor:'#c05030',
+   pos:{left:'30%',top:'72%'},
+   cats:['All','Dosas','Tiffin','Rice','Drinks'],
+   items:[
+     {id:'ss1',n:'Masala Dosa',d:'Crisp rice crepe, spiced potato',p:70,c:'Dosas',v:true,stock:true},
+     {id:'ss2',n:'Onion Rava Dosa',d:'Lacy thin crepe, caramelised onions',p:80,c:'Dosas',v:true,stock:true},
+     {id:'ss3',n:'Plain Dosa',d:'Classic thin crispy dosa, chutneys',p:50,c:'Dosas',v:true,stock:true},
+     {id:'ss4',n:'Idli (2 pcs)',d:'Steamed rice cakes, sambar, chutney',p:45,c:'Tiffin',v:true,stock:true},
+     {id:'ss5',n:'Medu Vada',d:'Crispy lentil fritter, sambar',p:40,c:'Tiffin',v:true,stock:true},
+     {id:'ss6',n:'Curd Rice',d:'Tempered yoghurt rice, pomegranate',p:65,c:'Rice',v:true,stock:true},
+     {id:'ss7',n:'Filter Coffee',d:'South-Indian decoction, frothy milk',p:25,c:'Drinks',v:true,stock:true},
+   ]},
+  {id:'sn',name:'Snapeats',icon:'🥪',cuisine:'Snacks · Sandwiches · Beverages',wait:'5–8 min',status:'open',
+   color:'#e8eef8',dotColor:'#2a6db5',
+   pos:{left:'70%',top:'68%'},
+   cats:['All','Sandwiches','Snacks','Cold Drinks'],
+   items:[
+     {id:'sn1',n:'Grilled Veg Sandwich',d:'Cheese, peppers, sourdough',p:65,c:'Sandwiches',v:true,stock:true},
+     {id:'sn2',n:'Chicken Wrap',d:'Tandoori chicken, mint mayo',p:100,c:'Sandwiches',v:false,stock:true},
+     {id:'sn3',n:'Club Sandwich',d:'Triple-decker, egg, cheese, veggies',p:90,c:'Sandwiches',v:true,stock:true},
+     {id:'sn4',n:'Peri-Peri Fries',d:'Crinkle cut, house seasoning',p:70,c:'Snacks',v:true,stock:true},
+     {id:'sn5',n:'Samosa (2)',d:'Spiced potato, tamarind chutney',p:30,c:'Snacks',v:true,stock:true},
+     {id:'sn6',n:'Cold Coffee',d:'House blend, sweetened, iced',p:60,c:'Cold Drinks',v:true,stock:true},
+     {id:'sn7',n:'Mango Lassi',d:'Fresh mango, thick curd, chilled',p:55,c:'Cold Drinks',v:true,stock:true},
+   ]},
+  {id:'hs',name:'Hotspot',icon:'🌮',cuisine:'Burgers · Fast Food · Wraps',wait:'Opens 4:00 PM',status:'closed',
+   color:'#f0ece8',dotColor:'#8b6a4a',
+   pos:{left:'76%',top:'38%'},
+   cats:['All','Burgers','Wraps','Sides'],
+   items:[
+     {id:'hs1',n:'Classic Veg Burger',d:'Aloo tikki, coleslaw, sesame bun',p:80,c:'Burgers',v:true,stock:true},
+     {id:'hs2',n:'Chicken Zinger',d:'Crispy fried chicken, sriracha mayo',p:120,c:'Burgers',v:false,stock:true},
+     {id:'hs3',n:'Mexican Wrap',d:'Beans, corn, jalapeños, sour cream',p:90,c:'Wraps',v:true,stock:true},
+     {id:'hs4',n:'Loaded Nachos',d:'Cheese sauce, jalapeños, salsa',p:85,c:'Sides',v:true,stock:true},
+   ]}
+];
+
+let ORDERS = [];
+let STAFF_ORDERS = [
+  {id:'#S44',customer:'Priya Mehra',items:'Dal Makhani · Jeera Rice · Naan × 2',amount:210,status:'incoming',time:'2 min ago'},
+  {id:'#S43',customer:'Rohit Gupta',items:'Paneer Butter Masala · Roti × 3',amount:195,status:'incoming',time:'5 min ago'},
+  {id:'#S42',customer:'Aryan Sharma',items:'Butter Chicken · Naan × 2',amount:180,status:'preparing',pct:62,time:'12 min'},
+  {id:'#S41',customer:'Sneha Patel',items:'Veg Thali',amount:140,status:'ready',pct:90,time:'Ready'},
+];
+
+let currentUser = null, currentStaff = null;
+let selectedOutletId = null, drawerCat = 'All', drawerCart = {};
+let cart = {}, cartOutletId = null;
+let orderCounter = 100;
+
+const vars = {'--teal':'#1a5f5a','--teal2':'#2a7f78'};
+
+// ═══════════════ NAVIGATION ═══════════════
+function navigate(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(page+'Page')?.classList.add('active');
+  window.scrollTo(0,0);
+}
+function showLogin(){navigate('login')}
+function goHome(){navigate('home')}
+
+// ═══════════════ LOGIN ═══════════════
+function switchLoginTab(type){
+  document.querySelectorAll('.ltab').forEach((el,i)=>el.classList.toggle('on',(i===0&&type==='student')||(i===1&&type==='staff')));
+  document.getElementById('studentForm').style.display = type==='student'?'flex':'none';
+  document.getElementById('staffForm').style.display = type==='staff'?'flex':'none';
+}
+function loginStudent(){
+  const email = document.getElementById('sEmail').value.trim();
+  if(!email.includes('@bennett.edu.in')){toast('Please use your @bennett.edu.in email');return;}
+  const raw = email.split('@')[0].split('.');
+  const name = raw.map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+  currentUser = {name, email, initials:raw.map(w=>w[0].toUpperCase()).join('').slice(0,2)};
+  document.getElementById('heroName').textContent = name.split(' ')[0]+'.';
+  const day = new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('heroDate').textContent = day+' · 3 ports open';
+  document.getElementById('tbRight').innerHTML = `
+    <button class="tb-btn" onclick="navigate('ordersPage')">My Orders</button>
+    <div class="tb-avatar" title="${name}">${currentUser.initials}</div>
+    <button class="tb-btn" onclick="logout()">Sign Out</button>`;
+  renderChartPorts();
+  renderHomeOrders();
+  navigate('home');
+  toast(`Welcome aboard, ${name.split(' ')[0]}! 🧭`);
+}
+function loginStaff(){
+  const outletId = document.getElementById('staffOutletSel').value;
+  const outlet = OUTLETS.find(o=>o.id===outletId);
+  currentStaff = {outlet};
+  document.getElementById('sbTitle').textContent = outlet.name;
+  document.getElementById('tbRight').innerHTML = `
+    <span class="tb-pill tp-staff">${outlet.name.split(' ').map(w=>w[0]).join('')} STAFF</span>
+    <div class="tb-avatar staff">${outlet.name.split(' ').slice(0,2).map(w=>w[0]).join('')}</div>
+    <button class="tb-btn" onclick="logout()">Sign Out</button>`;
+  renderStaffOrders();
+  renderStaffMenu();
+  navigate('staff');
+  toast(`Staff portal — ${outlet.name}`);
+}
+function logout(){
+  currentUser=null; currentStaff=null; cart={}; ORDERS=[];
+  document.getElementById('tbRight').innerHTML = `<button class="tb-btn gold" onclick="navigate('login')">Log In</button>`;
+  navigate('login');
+}
+
+// ═══════════════ HOME TABS ═══════════════
+function switchHomeTab(tab){
+  document.querySelectorAll('.snav-item').forEach((el,i)=>el.classList.toggle('on',['ports','orders','history'][i]===tab));
+  document.querySelectorAll('.tab-section').forEach(el=>el.classList.remove('on'));
+  document.getElementById('htab-'+tab).classList.add('on');
+  if(tab==='orders') renderHomeOrders();
+}
+
+// ═══════════════ NAUTICAL CHART ═══════════════
+function renderChartPorts(){
+  const container = document.getElementById('chartPorts');
+  container.innerHTML = OUTLETS.map(o=>{
+    const sClass = o.status==='open'?'pms-open':o.status==='busy'?'pms-busy':'pms-closed';
+    const sLabel = o.status==='open'?'Open':o.status==='busy'?'Busy':'Closed';
+    return `<div class="port-marker" id="pm-${o.id}" style="left:${o.pos.left};top:${o.pos.top}" onclick="${o.status!=='closed'?`openDrawer('${o.id}')`:''}"
+      title="${o.name}">
+      <div class="pm-ring" style="color:${o.dotColor}"></div>
+      <div class="pm-ring2" style="color:${o.dotColor}"></div>
+      <div class="pm-dot" style="background:${o.color};color:${o.dotColor}">${o.icon}</div>
+      <div class="pm-label">
+        <div class="pm-name">${o.name}</div>
+        <div class="pm-tag">${o.wait}</div>
+        <span class="pm-status ${sClass}">${sLabel}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+let currentDrawerOutlet = null;
+function openDrawer(outletId){
+  const o = OUTLETS.find(x=>x.id===outletId);
+  currentDrawerOutlet = o;
+  selectedOutletId = outletId;
+  drawerCat = 'All';
+
+  // update active state on markers
+  document.querySelectorAll('.port-marker').forEach(el=>el.classList.remove('active'));
+  document.getElementById('pm-'+outletId)?.classList.add('active');
+
+  document.getElementById('pdIcon').textContent = o.icon;
+  document.getElementById('pdName').textContent = o.name;
+  document.getElementById('pdCuisine').textContent = o.cuisine;
+  document.getElementById('pdWait').textContent = o.wait;
+  const sClass = o.status==='open'?'pms-open':o.status==='busy'?'pms-busy':'pms-closed';
+  const sLabel = o.status==='open'?'Open':o.status==='busy'?'Busy':'Closed';
+  document.getElementById('pdStatusItem').innerHTML = `<span class="pm-status ${sClass}" style="margin-left:4px">${sLabel}</span>`;
+
+  renderDrawerCats(o);
+  renderDrawerItems(o);
+  document.getElementById('portDrawer').classList.add('open');
+  document.getElementById('btnGoToOrder').disabled = false;
+}
+function closeDrawer(){
+  document.getElementById('portDrawer').classList.remove('open');
+  document.querySelectorAll('.port-marker').forEach(el=>el.classList.remove('active'));
+  selectedOutletId = null;
+}
+function renderDrawerCats(o){
+  document.getElementById('pdCats').innerHTML = o.cats.map(c=>`<div class="pdcat ${c===drawerCat?'on':''}" onclick="filterDrawer('${o.id}','${c}')">${c}</div>`).join('');
+}
+function filterDrawer(id,cat){drawerCat=cat;renderDrawerCats(OUTLETS.find(x=>x.id===id));renderDrawerItems(OUTLETS.find(x=>x.id===id));}
+function renderDrawerItems(o){
+  const items = drawerCat==='All'?o.items:o.items.filter(i=>i.c===drawerCat);
+  const avail = items.filter(i=>i.stock);
+  document.getElementById('pdItems').innerHTML = avail.length===0?
+    `<div style="padding:24px;text-align:center;color:var(--ink4);font-size:13px">No available items in this category</div>`:
+    items.map(i=>`<div class="pd-item ${!i.stock?'oos':''}">
+      <div class="pdi-badge ${i.v?'pdi-veg':'pdi-nv'}">${i.v?'🟢':'🔴'}</div>
+      <div class="pdi-body"><div class="pdi-name">${i.n}</div><div class="pdi-desc">${i.d}</div></div>
+      <div class="pdi-right">
+        <div class="pdi-price">₹${i.p}</div>
+        ${i.stock?`<button class="pdi-add" onclick="addDrawerCart('${o.id}','${i.id}','${i.n.replace(/'/g,"\\'")}',${i.p})">+</button>`:'<span style="font-size:9px;color:var(--ink4)">OOS</span>'}
+      </div>
+    </div>`).join('');
+}
+function addDrawerCart(outletId,itemId,name,price){
+  if(!drawerCart[itemId]) drawerCart[itemId]={name,price,qty:0,outletId};
+  drawerCart[itemId].qty++;
+  updateDrawerCartDisplay();
+  toast(`${name} added to cart`);
+}
+function updateDrawerCartDisplay(){
+  const keys = Object.keys(drawerCart).filter(k=>drawerCart[k].qty>0);
+  const total = keys.reduce((s,k)=>s+drawerCart[k].price*drawerCart[k].qty,0);
+  const qty = keys.reduce((s,k)=>s+drawerCart[k].qty,0);
+  document.getElementById('drawerCart').textContent = qty>0?`${qty} item${qty>1?'s':''} · ₹${total}`:'empty';
+}
+
+function goToOutletPage(){
+  if(!selectedOutletId) return;
+  // transfer drawer cart to main cart
+  cart = {...drawerCart};
+  cartOutletId = selectedOutletId;
+  loadOutletPage(selectedOutletId);
+  navigate('outlet');
+  closeDrawer();
+}
+
+// ═══════════════ OUTLET PAGE ═══════════════
+function loadOutletPage(outletId){
+  const o = OUTLETS.find(x=>x.id===outletId);
+  cartOutletId = outletId;
+  document.getElementById('ohIcon').textContent = o.icon;
+  document.getElementById('ohName').textContent = o.name;
+  document.getElementById('ohCuisine').textContent = o.cuisine;
+  const sClass = o.status==='open'?'pms-open':o.status==='busy'?'pms-busy':'pms-closed';
+  const sLabel = o.status==='open'?'Open':o.status==='busy'?'Busy':'Closed';
+  document.getElementById('ohMeta').innerHTML = `
+    <span style="font-size:12px;color:var(--ink4)">⏱ ${o.wait}</span>
+    <span class="pm-status ${sClass}" style="padding:5px 12px">${sLabel}</span>`;
+
+  // Sidebar
+  const sidebar = document.getElementById('outletSidebar');
+  sidebar.innerHTML = `<div class="os-label" style="padding:20px 20px 8px">Categories</div>`+
+    o.cats.filter(c=>c!=='All').map(c=>`<div class="os-cat" onclick="scrollToSection('${c}')">${c}</div>`).join('');
+
+  // Menu
+  const menuEl = document.getElementById('outletMenu');
+  const allCats = [...new Set(o.items.map(i=>i.c))];
+  menuEl.innerHTML = allCats.map(cat=>{
+    const catItems = o.items.filter(i=>i.c===cat);
+    return `<div class="menu-cat-section" id="sec-${cat}">
+      <div class="mcs-title">${cat} <span class="mcs-count">${catItems.length} items</span></div>
+      <div class="menu-items-grid">${catItems.map(item=>`
+        <div class="menu-card ${!item.stock?'oos':''}" onclick="${item.stock?`addToCart('${o.id}','${item.id}','${item.n.replace(/'/g,"\\'")}',${item.p})`:''}">
+          ${!item.stock?'<div class="mc-oos-badge">Out of Stock</div>':''}
+          <div class="mc-top">
+            <div class="mc-icon ${item.v?'mc-veg':'mc-nv'}">${item.v?'🟢':'🔴'}</div>
+            <div><div class="mc-name">${item.n}</div><div class="mc-desc">${item.d}</div></div>
+          </div>
+          <div class="mc-footer">
+            <div class="mc-price">₹${item.p}</div>
+            ${item.stock?`<button class="mc-add">+</button>`:''}
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  renderCartPanel();
+}
+
+function scrollToSection(cat){
+  const el = document.getElementById('sec-'+cat);
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.os-cat').forEach(el2=>el2.classList.toggle('on',el2.textContent===cat));
+}
+
+function addToCart(outletId,itemId,name,price){
+  if(cartOutletId && cartOutletId!==outletId){cart={};cartOutletId=outletId;}
+  if(!cart[itemId]) cart[itemId]={name,price,qty:0,outletId};
+  cart[itemId].qty++;
+  renderCartPanel();
+  toast(`${name} added`);
+}
+function removeFromCart(itemId){
+  if(cart[itemId]) cart[itemId].qty=Math.max(0,cart[itemId].qty-1);
+  if(cart[itemId]?.qty===0) delete cart[itemId];
+  renderCartPanel();
+}
+function renderCartPanel(){
+  const keys = Object.keys(cart).filter(k=>cart[k].qty>0);
+  const total = keys.reduce((s,k)=>s+cart[k].price*cart[k].qty,0);
+  const cartEl = document.getElementById('cartItemsEl');
+  const footerEl = document.getElementById('cartFooter');
+  if(keys.length===0){
+    cartEl.innerHTML = `<div class="cp-empty">Your cart is empty.<br><span style="font-size:11px;margin-top:6px;display:block">Add items from the menu</span></div>`;
+    footerEl.style.display='none';
+    return;
+  }
+  cartEl.innerHTML = keys.map(k=>`<div class="cart-item">
+    <div class="ci-name">${cart[k].name}<small>₹${cart[k].price} each</small></div>
+    <div class="ci-qty">
+      <button class="ci-btn" onclick="removeFromCart('${k}')">−</button>
+      <span class="ci-n">${cart[k].qty}</span>
+      <button class="ci-btn" onclick="addToCart('${cartOutletId}','${k}','${cart[k].name.replace(/'/g,"\\'")}',${cart[k].price})">+</button>
+    </div>
+    <div class="ci-price">₹${cart[k].price*cart[k].qty}</div>
+  </div>`).join('');
+  document.getElementById('cartTotal').textContent = `₹${total}`;
+  footerEl.style.display='block';
+}
+
+function openOrderConfirm(){
+  const keys = Object.keys(cart).filter(k=>cart[k].qty>0);
+  const total = keys.reduce((s,k)=>s+cart[k].price*cart[k].qty,0);
+  document.getElementById('confirmItems').innerHTML = keys.map(k=>`
+    <div class="confirm-item-row"><span>${cart[k].name} × ${cart[k].qty}</span><span>₹${cart[k].price*cart[k].qty}</span></div>`).join('');
+  document.getElementById('confirmTotal').innerHTML = `<span>Total</span><span style="color:var(--gold)">₹${total}</span>`;
+  openModal('confirmModal');
+}
+function confirmOrder(){
+  const keys = Object.keys(cart).filter(k=>cart[k].qty>0);
+  const total = keys.reduce((s,k)=>s+cart[k].price*cart[k].qty,0);
+  const outlet = OUTLETS.find(o=>o.id===cartOutletId);
+  const orderId = `#${++orderCounter}`;
+  const itemStr = keys.map(k=>`${cart[k].name} × ${cart[k].qty}`).join(', ');
+  const now = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  ORDERS.unshift({id:orderId,name:itemStr,outletName:outlet.name,outletId:cartOutletId,total,status:'received',time:now});
+  STAFF_ORDERS.unshift({id:orderId,customer:currentUser?.name||'Student',items:itemStr,amount:total,status:'incoming',time:'Just now'});
+  cart={};
+  closeModal('confirmModal');
+  renderCartPanel();
+  updateHeroStats();
+  navigate('orders');
+  renderOrdersPage();
+  toast(`Order ${orderId} placed! 🎉`);
+}
+
+// ═══════════════ ORDERS PAGE ═══════════════
+function renderOrdersPage(){
+  const statusMap={
+    received:{badge:'oc2b-recv',label:'Received',done:[0],now:[1]},
+    preparing:{badge:'oc2b-prep',label:'Preparing',done:[0,1],now:[2]},
+    ready:{badge:'oc2b-ready',label:'Ready ✓',done:[0,1,2],now:[3]},
+    completed:{badge:'oc2b-done',label:'Done',done:[0,1,2,3],now:[]},
+  };
+  const steps=['Received','Preparing','Ready','Done'];
+  const active = ORDERS.filter(o=>o.status!=='completed');
+  const el = document.getElementById('ordersActiveList');
+  if(active.length===0){el.innerHTML='<div style="color:var(--ink4);font-size:13px;padding:20px 0">No active orders. <a href="#" onclick="navigate(\'home\');return false" style="color:var(--teal)">Browse the ports →</a></div>';return;}
+  el.innerHTML = active.map(ord=>{
+    const sm = statusMap[ord.status];
+    const track = steps.map((s,i)=>{
+      const cls = sm.done.includes(i)?'done':sm.now.includes(i)?'now':'';
+      return `<div class="otrack ${cls}"><div class="otdot"></div><div class="otlbl">${s}</div></div>`;
+    }).join('');
+    return `<div class="order-card2">
+      <div class="oc2-top">
+        <div class="oc2-ref">${ord.id}</div>
+        <div class="oc2-outlet">${ord.outletName}</div>
+        <div class="oc2-time">${ord.time}</div>
+        <div class="oc2-badge ${sm.badge}">${sm.label}</div>
+      </div>
+      <div class="oc2-name">${ord.name.split(',')[0]}${ord.name.includes(',')?' + more':''}</div>
+      <div class="oc2-items">${ord.name}</div>
+      <div class="oc2-track">${track}</div>
+      <div class="oc2-total">₹${ord.total}</div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════ HOME ORDERS ═══════════════
+function renderHomeOrders(){
+  renderOrdersPage();
+  document.getElementById('homeOrdersList').innerHTML = document.getElementById('ordersActiveList').innerHTML ||
+    '<div style="color:var(--ink4);font-size:13px;padding:20px 0">No active orders yet.</div>';
+  document.getElementById('homeHistoryList').innerHTML = document.getElementById('ordersCompletedList').innerHTML;
+}
+function updateHeroStats(){
+  const active = ORDERS.filter(o=>o.status!=='completed');
+  document.getElementById('heroActiveCount').textContent = active.length;
+  const total = ORDERS.reduce((s,o)=>s+o.total,0);
+  document.getElementById('heroSpent').textContent = `₹${total}`;
+}
+
+// ═══════════════ STAFF ═══════════════
+function switchStaffTab(tab){
+  document.querySelectorAll('.staff-tab').forEach((el,i)=>el.classList.toggle('on',['orders','menu','reports'][i]===tab));
+  document.querySelectorAll('.staff-tab-content').forEach(el=>el.classList.remove('on'));
+  document.getElementById('stc-'+tab).classList.add('on');
+}
+function toggleOutletStatus(el){
+  const pill = document.getElementById('portStatusPill');
+  if(el.checked){pill.textContent='OPEN';pill.className='tb-pill tp-online';}
+  else{pill.textContent='CLOSED';pill.style.cssText='font-size:10px;padding:3px 10px;border-radius:20px;font-weight:600;background:rgba(139,58,42,.1);color:var(--rust);border:1px solid rgba(139,58,42,.2)';}
+  toast(el.checked?'Port is now open':'Port marked as closed');
+}
+
+function renderStaffOrders(){
+  const inc = STAFF_ORDERS.filter(o=>o.status==='incoming');
+  const prog = STAFF_ORDERS.filter(o=>o.status==='preparing'||o.status==='ready');
+  document.getElementById('sc-inc').textContent = inc.length;
+  document.getElementById('sc-prep').textContent = STAFF_ORDERS.filter(o=>o.status==='preparing').length;
+  document.getElementById('sc-ready').textContent = STAFF_ORDERS.filter(o=>o.status==='ready').length;
+
+  const incEl = document.getElementById('staffIncoming');
+  incEl.innerHTML = inc.length?inc.map(ord=>`
+    <div class="ticket">
+      <div class="tk-head"><div class="tk-ref">${ord.id}</div><div class="tk-cust">${ord.customer}</div><div class="tk-time">${ord.time}</div></div>
+      <div class="tk-items">${ord.items}</div>
+      <div class="tk-amt">₹${ord.amount}</div>
+      <div class="tk-btns">
+        <button class="tkbtn tkbtn-acc" onclick="staffAct('${ord.id}','accept')">Accept</button>
+        <button class="tkbtn tkbtn-dec" onclick="staffAct('${ord.id}','decline')">Decline</button>
+      </div>
+    </div>`).join(''):'<div style="color:var(--ink4);font-size:12px;padding:16px 0;grid-column:span 2">No incoming orders at the moment.</div>';
+
+  const progEl = document.getElementById('staffInProgress');
+  progEl.innerHTML = prog.map(ord=>{
+    const isReady = ord.status==='ready';
+    return `<div class="ipcard">
+      <div class="tk-head"><div class="tk-ref">${ord.id}</div><div class="tk-cust">${ord.customer}</div><div class="tk-time">${ord.time}</div></div>
+      <div class="tk-items">${ord.items}</div>
+      <div class="ip-bar"><div class="ip-fill" style="width:${ord.pct||0}%"></div></div>
+      <div class="ip-steps">
+        <span class="ips done">Received</span>
+        <span class="ips done">Accepted</span>
+        <span class="ips ${isReady?'done':'now'}">Preparing</span>
+        <span class="ips ${isReady?'now':''}">Ready</span>
+      </div>
+      <div class="tk-btns" style="margin-top:10px">
+        ${isReady
+          ?`<button class="tkbtn tkbtn-done" onclick="staffAct('${ord.id}','complete')">Mark Complete ✓</button>`
+          :`<button class="tkbtn tkbtn-next" onclick="staffAct('${ord.id}','ready')">Mark Ready →</button>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function staffAct(ordId, action){
+  const sOrd = STAFF_ORDERS.find(o=>o.id===ordId);
+  const cOrd = ORDERS.find(o=>o.id===ordId);
+  if(!sOrd) return;
+  if(action==='accept'){sOrd.status='preparing';sOrd.pct=25;if(cOrd)cOrd.status='preparing';}
+  else if(action==='decline'){STAFF_ORDERS=STAFF_ORDERS.filter(o=>o.id!==ordId);ORDERS=ORDERS.filter(o=>o.id!==ordId);toast(`Order ${ordId} declined`);}
+  else if(action==='ready'){sOrd.status='ready';sOrd.pct=90;sOrd.time='Ready';if(cOrd)cOrd.status='ready';}
+  else if(action==='complete'){
+    sOrd.status='completed';if(cOrd)cOrd.status='completed';
+    document.getElementById('sc-done').textContent=parseInt(document.getElementById('sc-done').textContent)+1;
+    toast(`Order ${ordId} completed!`);
+  }
+  renderStaffOrders();
+}
+
+function renderStaffMenu(){
+  const outlet = currentStaff?.outlet;
+  if(!outlet) return;
+  const el = document.getElementById('staffMenuTable');
+  el.innerHTML = `<div class="mmtable">
+    <div class="mmt-hdr"><div>Item</div><div>Category</div><div>Price</div><div>Availability</div><div>Actions</div></div>
+    ${outlet.items.map(item=>`
+      <div class="mmt-row" id="mmr-${item.id}">
+        <div><div class="mmr-name">${item.n}</div><div class="mmr-cat">${item.c} · ${item.v?'Veg':'Non-Veg'}</div></div>
+        <div style="font-size:11px;color:var(--ink4)">${item.c}</div>
+        <div class="mmr-price">₹${item.p}</div>
+        <div class="tog-wr">
+          <div class="tog2 ${item.stock?'on':''}" onclick="toggleStock('${outlet.id}','${item.id}',this)"></div>
+          <span class="tog2-lbl">${item.stock?'In Stock':'Out'}</span>
+        </div>
+        <div class="mmr-btns">
+          <button class="mmr-btn" onclick="editPrice('${outlet.id}','${item.id}')">Edit</button>
+          <button class="mmr-btn del" onclick="delItem('${outlet.id}','${item.id}')">Del</button>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+function toggleStock(outletId,itemId,el){
+  const item = OUTLETS.find(o=>o.id===outletId).items.find(i=>i.id===itemId);
+  item.stock=!item.stock;
+  el.classList.toggle('on');
+  el.nextElementSibling.textContent=item.stock?'In Stock':'Out';
+  toast(`${item.n} → ${item.stock?'available':'out of stock'}`);
+}
+function editPrice(outletId,itemId){
+  const item = OUTLETS.find(o=>o.id===outletId).items.find(i=>i.id===itemId);
+  const np = prompt(`New price for "${item.n}" (current ₹${item.p}):`,item.p);
+  if(np&&!isNaN(np)&&+np>0){item.p=+np;renderStaffMenu();toast(`Price updated to ₹${item.p}`);}
+}
+function delItem(outletId,itemId){
+  const outlet = OUTLETS.find(o=>o.id===outletId);
+  const item = outlet.items.find(i=>i.id===itemId);
+  if(!confirm(`Remove "${item.n}"?`)) return;
+  outlet.items=outlet.items.filter(i=>i.id!==itemId);
+  renderStaffMenu();
+  toast(`${item.n} removed`);
+}
+function openAddModal(){openModal('addItemModal');}
+function addMenuItem(){
+  const name=document.getElementById('newName').value.trim();
+  const price=parseInt(document.getElementById('newPrice').value);
+  if(!name||!price){toast('Please fill name and price');return;}
+  const outlet=currentStaff.outlet;
+  const newItem={id:outlet.id+Date.now(),n:name,d:document.getElementById('newDesc').value||'Fresh item',p:price,c:document.getElementById('newCat').value,v:document.getElementById('newType').value==='veg',stock:document.getElementById('newStock').value==='1'};
+  outlet.items.push(newItem);
+  closeModal('addItemModal');
+  renderStaffMenu();
+  document.getElementById('newName').value='';
+  document.getElementById('newPrice').value='';
+  document.getElementById('newDesc').value='';
+  toast(`${name} added to the manifest`);
+}
+
+// ═══════════════ MODALS ═══════════════
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-ov').forEach(el=>el.addEventListener('click',e=>{if(e.target===el) el.classList.remove('open');}));
+
+// ═══════════════ TOAST ═══════════════
+function toast(msg,dur=2600){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),dur);
+}
+
+// ═══════════════ HELM SCROLL ═══════════════
+window.addEventListener('scroll',()=>{
+  const g=document.getElementById('homeHelmG');
+  if(g){g.style.animation='none';g.style.transform=`rotate(${window.scrollY*0.3}deg)`;}
+},{passive:true});
+
+// ═══════════════ SCROLL SPY ═══════════════
+document.getElementById('outletMenu')?.addEventListener('scroll',()=>{
+  const sections=document.querySelectorAll('.menu-cat-section');
+  let current='';
+  sections.forEach(s=>{if(s.offsetTop<=outletMenu.scrollTop+80)current=s.id.replace('sec-','');});
+  document.querySelectorAll('.os-cat').forEach(el=>el.classList.toggle('on',el.textContent===current));
+});
+</script>
+</body>
+</html>
