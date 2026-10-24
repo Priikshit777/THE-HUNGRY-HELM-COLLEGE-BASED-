@@ -10,14 +10,11 @@ const outletRoutes  = require('./routes/outlets');
 const orderRoutes   = require('./routes/orders');
 const paymentRoutes = require('./routes/payment');
 
-// Connect to MongoDB
-connectDB();
-
 const app = express();
 
 // ── Middleware ─────────────────────────────────────────────
 app.use(cors({
-  origin: process.env.CLIENT_URL || '*',
+  origin: true,
   credentials: true
 }));
 app.use(express.json());
@@ -48,6 +45,12 @@ app.use(errorHandler);
 
 // ── Start ──────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-  console.log(`\n⚓  Hungry Helm server running on http://localhost:${PORT}  [${process.env.NODE_ENV || 'development'}]\n`)
-);
+
+async function startServer() {
+  await connectDB();
+  app.listen(PORT, () =>
+    console.log(`\n⚓  Hungry Helm server running on http://localhost:${PORT}  [${process.env.NODE_ENV || 'development'}]\n`)
+  );
+}
+
+startServer();

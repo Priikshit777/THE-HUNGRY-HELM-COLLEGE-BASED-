@@ -2,7 +2,9 @@
 //  THE HUNGRY HELM — script.js  (backend-connected version)
 // ═══════════════════════════════════════════════════════════
 
-const API = 'http://localhost:5000/api';
+const API = (window.location.protocol.startsWith('http') && window.location.port === '5001')
+  ? `${window.location.origin}/api`
+  : 'http://localhost:5001/api';
 
 // Chart positions are visual only — kept hardcoded
 const PORT_POSITIONS = {

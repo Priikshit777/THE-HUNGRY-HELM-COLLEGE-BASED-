@@ -126,8 +126,10 @@ const STUDENT_DATA = {
   enrollmentNo: 'E21CSE001'
 };
 
-async function seed() {
-  await connectDB();
+async function seed(disconnectAfter = true) {
+  if (mongoose.connection.readyState !== 1) {
+    await connectDB();
+  }
 
   console.log('\n🌱  Seeding Hungry Helm database...\n');
 
@@ -166,7 +168,13 @@ async function seed() {
   );
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
-  mongoose.disconnect();
+  if (disconnectAfter) {
+    mongoose.disconnect();
+  }
 }
 
-seed().catch(err => { console.error(err); process.exit(1); });
+if (require.main === module) {
+  seed(true).catch(err => { console.error(err); process.exit(1); });
+}
+
+module.exports = { seed, OUTLETS_DATA, STAFF_DATA, STUDENT_DATA };
