@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hungry Helm | Student Boarding</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Frameworks -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --midnight: #020617;
+            --ocean-glow: #0ea5e9;
+            --gold-leaf: #d4af37;
+            --neon-amber: #f59e0b;
+            --error-crimson: #ef4444;
+        }
+
+        body {
+            font-family: 'Playfair Display', serif;
+            background-color: var(--midnight);
+            color: #e2e8f0;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Noise Texture Overlay */
+        .noise::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            opacity: 0.05;
+            z-index: 9999;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Neon Midnight Voyage Glows */
+        .glow-mesh {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(2, 6, 23, 1) 0%, rgba(2, 6, 23, 0.4) 100%);
+            z-index: -1;
+        }
+
+        /* Hyper-Border Card Effect */
+        .maritime-card {
+            position: relative;
+            background: rgba(15, 23, 42, 0.3);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .maritime-card::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: conic-gradient(from var(--angle), transparent, var(--gold-leaf), transparent, var(--ocean-glow), transparent);
+            z-index: -1;
+            animation: rotate-border 8s linear infinite;
+        }
+
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        @keyframes rotate-border {
+            to { --angle: 360deg; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--midnight); }
+        ::-webkit-scrollbar-thumb { background: var(--gold-leaf); }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .input-voyage {
+            background: rgba(2, 6, 23, 0.6);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-voyage:focus {
+            border-bottom: 1px solid var(--gold-leaf);
+            box-shadow: 0 4px 20px -10px var(--gold-leaf);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .btn-authorize {
+            position: relative;
+            overflow: hidden;
+            background: transparent;
+            border: 1px solid var(--gold-leaf);
+            color: var(--gold-leaf);
+            transition: 0.5s;
+            z-index: 1;
+        }
+
+        .btn-authorize::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-authorize:hover::before { left: 100%; }
+        .btn-authorize:hover {
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+            letter-spacing: 0.4em;
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        /* Helm Animation */
+        .helm-bg {
+            animation: slow-rotate 60s linear infinite;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.1));
+        }
+
+        @keyframes slow-rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .float-icon {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body x-data="{ 
+    email: '', 
+    password: '', 
+    error: '',
+    loading: false,
+    isValidEmail() {
+        return this.email.toLowerCase().endsWith('@bennett.edu.in');
+    },
+    handleLogin() {
+        this.error = '';
+        if (!this.email || !this.password) {
+            this.error = 'Mandatory coordinates missing.';
+            return;
+        }
+        if (!this.isValidEmail()) {
+            this.error = 'Invalid vessel ID. Use @bennett.edu.in address.';
+            return;
+        }
+        this.loading = true;
+        setTimeout(() => { this.loading = false; alert('Auth Successful. Docking initiated...'); }, 2000);
+    }
+}" class="noise">
+
+    <div class="glow-mesh"></div>
+
+    <!-- Background Decorative Helm -->
+    <div class="fixed -bottom-32 -left-32 opacity-10 pointer-events-none z-0">
+        <svg class="helm-bg" width="600" height="600" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="80" stroke="#d4af37" stroke-width="0.5"/>
+            <g stroke="#d4af37" stroke-width="2">
+                <line x1="100" y1="20" x2="100" y2="180" />
+                <line x1="20" y1="100" x2="180" y2="100" />
+                <line x1="43.4" y1="43.4" x2="156.6" y2="156.6" />
+                <line x1="43.4" y1="156.6" x2="156.6" y2="43.4" />
+            </g>
+            <circle cx="100" cy="100" r="15" fill="#020617" stroke="#d4af37"/>
+        </svg>
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="w-full px-8 py-8 flex justify-between items-center relative z-50">
+        <div class="flex items-center space-x-3 group cursor-pointer">
+            <div class="w-12 h-12 border border-gold-leaf flex items-center justify-center transition-transform duration-1000 group-hover:rotate-[360deg]">
+                <i data-lucide="anchor" class="w-6 h-6 text-gold-leaf"></i>
+            </div>
+            <div>
+                <span class="block text-2xl font-black tracking-tighter uppercase text-white leading-none">The Hungry Helm</span>
+                <span class="text-[10px] tracking-[0.3em] uppercase text-gold-leaf opacity-70">Maritime Dining Protocol</span>
+            </div>
+        </div>
+        <div class="hidden md:block">
+            <div class="text-[10px] tracking-[0.5em] uppercase text-slate-500 font-bold italic">
+                Current Port: Sector-7 Bennett
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Section -->
+    <main class="flex-grow flex items-center justify-center px-4 relative z-10">
+        <div class="max-w-4xl w-full grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden maritime-card rounded-sm">
+            
+            <!-- Visual Side (Hidden on Mobile) -->
+            <div class="hidden lg:flex flex-col justify-between p-12 bg-slate-950 relative border-r border-slate-900 overflow-hidden">
+                <div class="absolute inset-0 opacity-20">
+                    <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path d="M0 50 Q 25 45, 50 50 T 100 50" fill="none" stroke="#d4af37" stroke-width="0.1" />
+                        <path d="M0 60 Q 25 55, 50 60 T 100 60" fill="none" stroke="#d4af37" stroke-width="0.1" />
+                        <path d="M0 40 Q 25 35, 50 40 T 100 40" fill="none" stroke="#d4af37" stroke-width="0.1" />
+                    </svg>
+                </div>
+                
+                <div class="relative">
+                    <div class="w-12 h-12 mb-6 border-l-2 border-t-2 border-gold-leaf"></div>
+                    <h2 class="text-5xl font-black italic uppercase text-white leading-tight">
+                        Embark on a <br>
+                        <span class="text-gold-leaf">Culinary</span> <br>
+                        Voyage
+                    </h2>
+                </div>
+
+                <div class="relative space-y-6">
+                    <div class="flex items-start space-x-4">
+                        <i data-lucide="compass" class="w-5 h-5 text-gold-leaf mt-1 float-icon"></i>
+                        <p class="text-sm text-slate-400 italic leading-relaxed">
+                            Navigate through five elite campus kitchens with real-time tracking and automated vessel docking.
+                        </p>
+                    </div>
+                    <div class="pt-6 border-t border-slate-800">
+                        <span class="text-[10px] uppercase tracking-[0.4em] text-slate-600">Vessel Status</span>
+                        <div class="flex items-center space-x-2 mt-2">
+                            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                            <span class="text-xs font-bold text-slate-300">All Ports Operational</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Side -->
+            <div class="p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-opacity-40">
+                <div class="mb-10">
+                    <h3 class="text-xs font-black uppercase tracking-[0.6em] text-gold-leaf mb-2">Manifest Entry</h3>
+                    <h1 class="text-4xl font-bold text-white uppercase italic">Student Boarding</h1>
+                </div>
+
+                <form @submit.prevent="handleLogin" class="space-y-8">
+                    <!-- Email Input -->
+                    <div class="group relative">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-[10px] uppercase tracking-[0.3em] font-bold text-slate-400 group-focus-within:text-gold-leaf transition-colors">Official Email ID</label>
+                            <i data-lucide="mail" class="w-4 h-4 text-slate-600 group-focus-within:text-gold-leaf transition-colors"></i>
+                        </div>
+                        <input 
+                            x-model="email"
+                            type="email" 
+                            placeholder="username@bennett.edu.in"
+                            class="w-full input-voyage py-4 px-0 text-white placeholder-slate-700 outline-none font-sans tracking-wide"
+                        >
+                        <div x-show="email && !isValidEmail()" x-cloak class="absolute -bottom-6 left-0 text-[10px] text-red-400 uppercase tracking-widest italic">
+                            Email must end with @bennett.edu.in
+                        </div>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="group relative">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-[10px] uppercase tracking-[0.3em] font-bold text-slate-400 group-focus-within:text-gold-leaf transition-colors">Access Key</label>
+                            <i data-lucide="key" class="w-4 h-4 text-slate-600 group-focus-within:text-gold-leaf transition-colors"></i>
+                        </div>
+                        <input 
+                            x-model="password"
+                            type="password" 
+                            placeholder="••••••••••••"
+                            class="w-full input-voyage py-4 px-0 text-white placeholder-slate-700 outline-none font-sans tracking-wide"
+                        >
+                    </div>
+
+                    <!-- Error Message -->
+                    <div x-show="error" x-transition x-cloak class="p-4 bg-red-500/10 border-l-2 border-red-500 flex items-center space-x-3">
+                        <i data-lucide="alert-circle" class="w-4 h-4 text-red-500"></i>
+                        <span class="text-xs uppercase tracking-wider text-red-200" x-text="error"></span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="pt-4">
+                        <button 
+                            type="submit"
+                            :disabled="loading"
+                            class="w-full btn-authorize py-5 uppercase font-black tracking-[0.3em] text-sm flex items-center justify-center space-x-3 group"
+                        >
+                            <span x-show="!loading">Authorize & Dock</span>
+                            <span x-show="loading" class="flex items-center">
+                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gold-leaf" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Authenticating...
+                            </span>
+                            <i x-show="!loading" data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-2 transition-transform"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Footer Links -->
+                <div class="mt-12 flex flex-col md:flex-row items-center justify-between gap-4 border-t border-slate-900 pt-8">
+                    <a href="#" class="text-[10px] uppercase tracking-widest text-slate-500 hover:text-gold-leaf transition-colors">Forgot Credentials?</a>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-[10px] uppercase tracking-widest text-slate-700">Not a student?</span>
+                        <a href="#" class="text-[10px] uppercase tracking-widest text-white border-b border-gold-leaf hover:pb-1 transition-all">Staff Deck</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="py-10 px-8 flex flex-col md:flex-row justify-between items-center border-t border-slate-900 bg-black/30 backdrop-blur-md relative z-20">
+        <div class="text-[10px] uppercase tracking-[0.4em] text-slate-600 mb-4 md:mb-0">
+            © 2024 The Hungry Helm — Navigate the Flavor Horizon
+        </div>
+        <div class="flex space-x-8">
+            <a href="#" class="text-[10px] uppercase tracking-[0.3em] text-slate-500 hover:text-gold-leaf transition-colors flex items-center">
+                <i data-lucide="shield-check" class="w-3 h-3 mr-2"></i> Encryption Active
+            </a>
+            <a href="#" class="text-[10px] uppercase tracking-[0.3em] text-slate-500 hover:text-gold-leaf transition-colors flex items-center">
+                <i data-lucide="help-circle" class="w-3 h-3 mr-2"></i> Crew Support
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Optional: Mouse tracking glow effect
+        document.addEventListener('mousemove', (e) => {
+            const glow = document.querySelector('.glow-mesh');
+            const x = (e.clientX / window.innerWidth) * 100;
+            const y = (e.clientY / window.innerHeight) * 100;
+            glow.style.background = `
+                radial-gradient(circle at ${x}% ${y}%, rgba(14, 165, 233, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(2, 6, 23, 1) 0%, rgba(2, 6, 23, 0.4) 100%)
+            `;
+        });
+    </script>
+</body>
+</html>

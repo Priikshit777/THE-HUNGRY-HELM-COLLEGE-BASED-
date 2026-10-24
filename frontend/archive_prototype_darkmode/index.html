@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Hungry Helm | Navigate Your Cravings</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Frameworks -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --midnight: #020617;
+            --ocean-glow: #0ea5e9;
+            --gold-leaf: #d4af37;
+            --neon-amber: #f59e0b;
+        }
+
+        body {
+            font-family: 'Playfair Display', serif;
+            background-color: var(--midnight);
+            color: #e2e8f0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Noise Texture Overlay */
+        .noise::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            opacity: 0.05;
+            z-index: 9999;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3臆filter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Neon Midnight Voyage Glows */
+        .glow-mesh {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(14, 165, 233, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        /* Hyper-Border Card Effect */
+        .maritime-card {
+            position: relative;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .maritime-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: conic-gradient(from var(--angle), transparent, var(--gold-leaf), transparent, var(--ocean-glow), transparent);
+            z-index: -1;
+            border-radius: inherit;
+            animation: rotate-border 6s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .maritime-card:hover::before {
+            opacity: 1;
+        }
+
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        @keyframes rotate-border {
+            to { --angle: 360deg; }
+        }
+
+        /* The Helm Rotation Logic */
+        .helm-container {
+            transition: transform 0.1s linear;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--midnight); }
+        ::-webkit-scrollbar-thumb { background: var(--gold-leaf); border-radius: 10px; }
+
+        .text-glow {
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        }
+
+        .neon-line {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-leaf), transparent);
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+        .float-element { animation: float 6s ease-in-out infinite; }
+
+        .btn-set-sail {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--gold-leaf);
+            background: transparent;
+            color: var(--gold-leaf);
+            transition: 0.4s;
+            z-index: 1;
+        }
+
+        .btn-set-sail::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 0;
+            background: var(--gold-leaf);
+            transition: 0.4s;
+            z-index: -1;
+        }
+
+        .btn-set-sail:hover::after { height: 100%; }
+        .btn-set-sail:hover { color: var(--midnight); box-shadow: 0 0 30px rgba(212, 175, 55, 0.4); }
+    </style>
+</head>
+<body x-data="{ 
+    scrollY: 0, 
+    showLogin: false, 
+    loginType: 'student',
+    outlets: [
+        { name: 'Infinity Kitchens', icon: 'zap', desc: 'Infinite flavors, zero boundaries.' },
+        { name: 'House of Chow', icon: 'utensils', desc: 'The elite wok-fired Asian mastery.' },
+        { name: 'Southern Stories', icon: 'map', desc: 'Authentic spices from the deep coast.' },
+        { name: 'Snapeats', icon: 'clock', desc: 'Lightning fast bites for study marathons.' },
+        { name: 'Hotspot', icon: 'flame', desc: 'Where the campus heat meets the plate.' }
+    ]
+}" 
+@scroll.window="scrollY = window.pageYOffset" 
+class="noise flex flex-col">
+
+    <div class="glow-mesh"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 px-8 py-6 flex justify-between items-center backdrop-blur-md bg-opacity-10">
+        <div class="flex items-center space-x-2 group cursor-pointer">
+            <div class="w-10 h-10 border border-gold-leaf flex items-center justify-center rotate-45 group-hover:rotate-180 transition-transform duration-700">
+                <i data-lucide="anchor" class="w-5 h-5 text-gold-leaf -rotate-45 group-hover:-rotate-180 transition-transform duration-700"></i>
+            </div>
+            <span class="text-2xl font-black tracking-tighter uppercase text-gold-leaf">The Hungry Helm</span>
+        </div>
+        
+        <div class="hidden md:flex space-x-12 text-sm uppercase tracking-widest font-bold">
+            <a href="#" class="hover:text-gold-leaf transition-colors">Vessel Tracking</a>
+            <a href="#" class="hover:text-gold-leaf transition-colors">Port Map</a>
+            <a href="#" class="hover:text-gold-leaf transition-colors">The Captains</a>
+        </div>
+
+        <button @click="showLogin = true" class="px-6 py-2 border border-gold-leaf hover:bg-gold-leaf hover:text-midnight transition-all duration-300 font-bold uppercase text-xs tracking-[0.2em]">
+            Board Ship
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-32 px-4 md:px-20 relative overflow-hidden">
+        
+        <!-- Hero Section -->
+        <section class="min-h-screen flex flex-col items-center justify-center text-center relative z-10">
+            <div class="mb-8 overflow-hidden">
+                <h1 class="text-6xl md:text-9xl font-black italic uppercase tracking-tighter leading-none text-white text-glow mb-4"
+                    :style="`transform: translateY(${scrollY * -0.2}px)`">
+                    Navigate Your<br>
+                    <span class="text-gold-leaf">Cravings</span>
+                </h1>
+                <div class="neon-line w-1/2 mx-auto mt-4"></div>
+            </div>
+
+            <p class="max-w-xl text-lg text-slate-400 font-light italic leading-relaxed mb-12" 
+               :style="`transform: translateY(${scrollY * -0.1}px)`">
+                Chart a course through five premier campus kitchens. From the depths of Southern Stories to the lightning speed of Snapeats, your culinary voyage begins at the helm.
+            </p>
+
+            <button class="btn-set-sail px-10 py-5 text-xl font-bold uppercase tracking-widest flex items-center group transition-all duration-500">
+                Set Sail 
+                <i data-lucide="compass" class="ml-3 group-hover:rotate-[360deg] transition-transform duration-700"></i>
+            </button>
+        </section>
+
+        <!-- THE 3D HELM (CSS/SVG Version) -->
+        <!-- Fixed position but moves as user scrolls past -->
+        <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-20 md:opacity-40 z-0">
+            <div class="helm-container transition-transform duration-300 ease-out" 
+                 :style="`transform: rotate(${scrollY * 0.15}deg) scale(${1 + scrollY * 0.0002})`">
+                <svg width="600" height="600" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="100" cy="100" r="40" stroke="#d4af37" stroke-width="2" stroke-dasharray="1 5"/>
+                    <circle cx="100" cy="100" r="85" stroke="#d4af37" stroke-width="0.5" stroke-opacity="0.5"/>
+                    <!-- Spokes -->
+                    <g stroke="#d4af37" stroke-width="4" stroke-linecap="round">
+                        <line x1="100" y1="10" x2="100" y2="190" />
+                        <line x1="10" y1="100" x2="190" y2="100" />
+                        <line x1="36.36" y1="36.36" x2="163.64" y2="163.64" />
+                        <line x1="36.36" y1="163.64" x2="163.64" y2="36.36" />
+                    </g>
+                    <!-- Handles -->
+                    <circle cx="100" cy="8" r="4" fill="#d4af37" />
+                    <circle cx="100" cy="192" r="4" fill="#d4af37" />
+                    <circle cx="8" cy="100" r="4" fill="#d4af37" />
+                    <circle cx="192" cy="100" r="4" fill="#d4af37" />
+                    <circle cx="35" cy="35" r="4" fill="#d4af37" />
+                    <circle cx="165" cy="165" r="4" fill="#d4af37" />
+                    <circle cx="35" cy="165" r="4" fill="#d4af37" />
+                    <circle cx="165" cy="35" r="4" fill="#d4af37" />
+                    <!-- Inner Hub -->
+                    <circle cx="100" cy="100" r="20" fill="#020617" stroke="#d4af37" stroke-width="2"/>
+                    <circle cx="100" cy="100" r="10" fill="#d4af37" fill-opacity="0.3"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Outlets Section: The Maritime Chart -->
+        <section class="py-32 relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="col-span-full mb-12 text-center md:text-left">
+                <h2 class="text-4xl font-bold uppercase tracking-widest text-gold-leaf mb-2">Destinations</h2>
+                <p class="text-slate-500 italic">Select your port of call to browse the daily provisions.</p>
+            </div>
+
+            <template x-for="(outlet, index) in outlets" :key="index">
+                <div class="maritime-card group p-8 flex flex-col justify-between h-[400px] cursor-pointer"
+                     :class="index === 3 ? 'md:col-span-2 lg:col-span-1' : ''">
+                    <div>
+                        <div class="w-16 h-16 border border-gold-leaf rounded-full flex items-center justify-center mb-8 group-hover:bg-gold-leaf group-hover:shadow-[0_0_20px_#d4af37] transition-all duration-500">
+                            <i :data-lucide="outlet.icon" class="w-6 h-6 text-gold-leaf group-hover:text-midnight"></i>
+                        </div>
+                        <h3 class="text-3xl font-black uppercase text-white mb-4 group-hover:text-gold-leaf transition-colors" x-text="outlet.name"></h3>
+                        <p class="text-slate-400 font-light italic leading-relaxed" x-text="outlet.desc"></p>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] tracking-[4px] uppercase font-bold text-gold-leaf opacity-60 group-hover:opacity-100">00${index + 1} / Sector-G</span>
+                        <div class="h-10 w-10 border border-slate-700 flex items-center justify-center group-hover:border-gold-leaf transition-colors">
+                            <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-500 group-hover:text-gold-leaf transition-colors"></i>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- A Special "Coming Soon" or Feature Card -->
+            <div class="maritime-card group p-8 flex flex-col items-center justify-center h-[400px] border-dashed">
+                <div class="relative w-24 h-24 mb-6">
+                    <div class="absolute inset-0 border border-gold-leaf animate-spin-slow opacity-20"></div>
+                    <div class="absolute inset-2 border border-ocean-glow animate-reverse-spin opacity-40"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i data-lucide="radar" class="w-8 h-8 text-gold-leaf animate-pulse"></i>
+                    </div>
+                </div>
+                <h3 class="text-xl font-bold uppercase tracking-widest text-white">Scanning New Ports</h3>
+                <p class="text-xs text-slate-500 mt-2">Connecting additional outlets soon...</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer: The Chart Legend -->
+    <footer class="mt-20 border-t border-slate-800 bg-black bg-opacity-40 backdrop-blur-xl py-12 px-8 z-10">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div class="space-y-4">
+                <div class="text-xl font-black text-gold-leaf uppercase italic tracking-tighter">The Hungry Helm</div>
+                <p class="text-sm text-slate-500 leading-relaxed italic">
+                    The official Bennett University maritime-inspired culinary navigation system. Reliable, fast, and legendary.
+                </p>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-[0.3em] text-gold-leaf mb-6">Manifest</h4>
+                <ul class="text-sm space-y-3 text-slate-400">
+                    <li><a href="#" class="hover:text-gold-leaf transition-colors">Vessel Tracking</a></li>
+                    <li><a href="#" class="hover:text-gold-leaf transition-colors">Order Records</a></li>
+                    <li><a href="#" class="hover:text-gold-leaf transition-colors">Staff Quarters</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-[0.3em] text-gold-leaf mb-6">Port Security</h4>
+                <ul class="text-sm space-y-3 text-slate-400">
+                    <li><a href="#" class="hover:text-gold-leaf transition-colors">Privacy Ordinance</a></li>
+                    <li><a href="#" class="hover:text-gold-leaf transition-colors">System Protocols</a></li>
+                    <li><a href="#" class="hover:text-gold-leaf transition-colors">Crew Support</a></li>
+                </ul>
+            </div>
+            <div class="flex flex-col items-end justify-end space-y-4">
+                <div class="text-[10px] uppercase font-bold tracking-[5px] text-slate-700">Coordinates: 28.4595° N, 77.5275° E</div>
+                <div class="text-xs text-slate-600">© 2024 THE HUNGRY HELM. BEYOND THE HORIZON.</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LOGIN MODAL (Aesthetically consistent) -->
+    <div x-show="showLogin" 
+         x-transition:enter="transition ease-out duration-500"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-300"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        
+        <!-- Backdrop -->
+        <div @click="showLogin = false" class="absolute inset-0 bg-midnight bg-opacity-95 backdrop-blur-2xl"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative w-full max-w-md bg-slate-900 border border-gold-leaf p-10 overflow-hidden">
+            <!-- Decorative corner -->
+            <div class="absolute top-0 right-0 w-20 h-20 bg-gold-leaf -translate-y-1/2 translate-x-1/2 rotate-45"></div>
+            
+            <div class="relative z-10">
+                <div class="flex space-x-4 mb-10 border-b border-slate-800">
+                    <button @click="loginType = 'student'" 
+                            class="pb-4 text-xs font-black uppercase tracking-widest transition-all duration-300"
+                            :class="loginType === 'student' ? 'text-gold-leaf border-b-2 border-gold-leaf' : 'text-slate-500 border-transparent'">
+                        Student Boarding
+                    </button>
+                    <button @click="loginType = 'staff'" 
+                            class="pb-4 text-xs font-black uppercase tracking-widest transition-all duration-300"
+                            :class="loginType === 'staff' ? 'text-gold-leaf border-b-2 border-gold-leaf' : 'text-slate-500 border-transparent'">
+                        Staff Quarters
+                    </button>
+                </div>
+
+                <h2 class="text-4xl font-black italic uppercase text-white mb-2" x-text="loginType === 'student' ? 'Enlist' : 'Authorized Personnel'"></h2>
+                <p class="text-sm text-slate-400 italic mb-8" x-text="loginType === 'student' ? 'Provide your official college credentials to set sail.' : 'Staff authentication required for deck access.'"></p>
+
+                <form class="space-y-6">
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-gold-leaf mb-2">Identifier</label>
+                        <input type="email" 
+                               :placeholder="loginType === 'student' ? 'name@bennett.edu.in' : 'Staff ID'"
+                               class="w-full bg-slate-800 border-l-2 border-gold-leaf p-4 text-white focus:outline-none focus:bg-slate-700 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-gold-leaf mb-2">Access Code</label>
+                        <input type="password" placeholder="••••••••" 
+                               class="w-full bg-slate-800 border-l-2 border-gold-leaf p-4 text-white focus:outline-none focus:bg-slate-700 transition-colors">
+                    </div>
+                    <button type="button" class="w-full bg-gold-leaf text-midnight font-black uppercase py-4 tracking-[0.4em] hover:bg-white transition-colors duration-500">
+                        Begin Voyage
+                    </button>
+                </form>
+
+                <button @click="showLogin = false" class="mt-8 text-[10px] text-slate-500 uppercase tracking-widest hover:text-white transition-colors">
+                    Abandon Boarding
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Custom animations and scroll effects
+        window.addEventListener('scroll', () => {
+            const helm = document.querySelector('.helm-container');
+            if(helm) {
+                // Smooth rotation based on scroll depth
+                const rotation = window.scrollY * 0.15;
+                helm.style.transform = `rotate(${rotation}deg) scale(${1 + window.scrollY * 0.0002})`;
+            }
+        });
+    </script>
+
+    <style>
+        /* Specific animations */
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes reverse-spin {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+        .animate-reverse-spin { animation: reverse-spin 15s linear infinite; }
+    </style>
+</body>
+</html>
