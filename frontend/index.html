@@ -87,13 +87,16 @@
         New here? <a href="#" onclick="switchLoginTab('studentReg'); return false" style="color:var(--teal);font-weight:600">Create an account</a>
       </div>
       <div class="lform-group"><label>College Email</label>
-        <input class="lform-input" id="sEmail" type="email" placeholder="yourname@bennett.edu.in" value="aryan.sharma@bennett.edu.in">
+        <input class="lform-input" id="sEmail" type="email" placeholder="prikshit@bennett.edu.in" value="prikshit@bennett.edu.in">
         <div class="lform-hint">Only @bennett.edu.in addresses</div>
       </div>
       <div class="lform-group"><label>Password</label>
         <input class="lform-input" id="sPass" type="password" placeholder="••••••••" value="password">
       </div>
       <button class="btn-submit btn-student" onclick="loginStudent()">Set Sail as Student →</button>
+      <div style="margin-top:14px;padding:10px 14px;background:var(--parchment);border:1px solid var(--border);border-radius:6px;font-size:11px;color:var(--ink3);line-height:1.6">
+        ⚓ <strong>Demo Credentials:</strong> <code style="color:var(--teal);font-weight:600">prikshit@bennett.edu.in</code> · password: <code style="color:var(--teal);font-weight:600">password</code>
+      </div>
     </div>
     <!-- STUDENT REGISTER -->
     <div id="studentRegForm" class="lform" style="display:none">
@@ -101,14 +104,14 @@
         Already have an account? <a href="#" onclick="switchLoginTab('student'); return false" style="color:var(--teal);font-weight:600">Log in</a>
       </div>
       <div class="lform-group"><label>Full Name</label>
-        <input class="lform-input" id="regSName" type="text" placeholder="Aryan Sharma">
+        <input class="lform-input" id="regSName" type="text" placeholder="Prikshit Sharma">
       </div>
       <div class="lform-group"><label>College Email</label>
         <input class="lform-input" id="regSEmail" type="email" placeholder="yourname@bennett.edu.in">
         <div class="lform-hint">Only @bennett.edu.in addresses</div>
       </div>
       <div class="lform-group"><label>Enrollment Number</label>
-        <input class="lform-input" id="regSEnrollment" type="text" placeholder="E.g., BU-2024-001">
+        <input class="lform-input" id="regSEnrollment" type="text" placeholder="E.g., S24CSEU1823">
       </div>
       <div class="lform-group"><label>Phone Number</label>
         <input class="lform-input" id="regSPhone" type="tel" placeholder="10-digit mobile number" maxlength="10">
@@ -139,9 +142,12 @@
         <input class="lform-input" id="staffId" placeholder="IK-STAFF-001" value="IK-STAFF-001">
       </div>
       <div class="lform-group"><label>Password</label>
-        <input class="lform-input" id="staffPass" type="password" placeholder="••••••••" value="password">
+        <input class="lform-input" id="staffPass" type="password" placeholder="••••••••" value="staff123">
       </div>
       <button class="btn-submit btn-staff" onclick="loginStaff()">Enter Staff Port →</button>
+      <div style="margin-top:14px;padding:10px 14px;background:var(--parchment);border:1px solid var(--border);border-radius:6px;font-size:11px;color:var(--ink3);line-height:1.6">
+        ⚓ <strong>Demo Credentials:</strong> Staff ID: <code style="color:var(--rust);font-weight:600">IK-STAFF-001</code> · password: <code style="color:var(--rust);font-weight:600">staff123</code>
+      </div>
     </div>
     <!-- STAFF REGISTER -->
     <div id="staffRegForm" class="lform" style="display:none">

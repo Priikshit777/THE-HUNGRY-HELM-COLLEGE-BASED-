@@ -118,13 +118,33 @@ const STAFF_DATA = [
   { name:'HS Staff',  email:'staff.hs@bennett.edu.in',  password:'staff123', outletId:'hs', staffId:'HS-STAFF-001' },
 ];
 
-// ─── Demo student account ─────────────────────────────────────────────────
-const STUDENT_DATA = {
-  name: 'Arsh Kumar',
-  email: 'S24CSEU1785@bennett.edu.in',
-  password: 'password',
-  enrollmentNo: 'E21CSE001'
-};
+// ─── Demo student accounts ────────────────────────────────────────────────
+const STUDENTS_DATA = [
+  {
+    name: 'Prikshit Sharma',
+    email: 'prikshit@bennett.edu.in',
+    password: 'password',
+    enrollmentNo: 'S24CSEU1823'
+  },
+  {
+    name: 'Aryan Sharma',
+    email: 'aryan.sharma@bennett.edu.in',
+    password: 'password',
+    enrollmentNo: 'E21CSE001'
+  },
+  {
+    name: 'Student Sailor',
+    email: 'student@bennett.edu.in',
+    password: 'password',
+    enrollmentNo: 'E21CSE002'
+  },
+  {
+    name: 'Arsh Kumar',
+    email: 'S24CSEU1785@bennett.edu.in',
+    password: 'password',
+    enrollmentNo: 'E21CSE003'
+  }
+];
 
 async function seed(disconnectAfter = true) {
   if (mongoose.connection.readyState !== 1) {
@@ -135,8 +155,8 @@ async function seed(disconnectAfter = true) {
 
   // Clear existing data
   await Outlet.deleteMany({});
-  await User.deleteMany({ role: 'staff' });
-  console.log('🗑   Cleared existing outlets and staff accounts');
+  await User.deleteMany({});
+  console.log('🗑   Cleared existing outlets, staff, and student accounts');
 
   // Seed outlets
   await Outlet.insertMany(OUTLETS_DATA);
@@ -148,21 +168,19 @@ async function seed(disconnectAfter = true) {
   }
   console.log(`✅  Seeded ${STAFF_DATA.length} staff accounts`);
 
-  // Seed demo student (skip if already exists)
-  const existing = await User.findOne({ email: STUDENT_DATA.email });
-  if (!existing) {
-    await User.create({ ...STUDENT_DATA, role: 'student' });
-    console.log('✅  Seeded demo student account');
-  } else {
-    console.log('ℹ️   Demo student already exists — skipped');
+  // Seed student accounts
+  for (const st of STUDENTS_DATA) {
+    await User.create({ ...st, role: 'student' });
   }
+  console.log(`✅  Seeded ${STUDENTS_DATA.length} student accounts`);
 
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log('📋  DEMO LOGIN CREDENTIALS\n');
-  console.log('  🎓 Student');
-  console.log(`     Email    : ${STUDENT_DATA.email}`);
-  console.log(`     Password : ${STUDENT_DATA.password}\n`);
-  console.log('  👷 Staff (password for all: staff123)');
+  console.log('  🎓 Student (password for all: password)');
+  STUDENTS_DATA.forEach(st =>
+    console.log(`     ${st.name.padEnd(16)} email: ${st.email}`)
+  );
+  console.log('\n  👷 Staff (password for all: staff123)');
   STAFF_DATA.forEach(s =>
     console.log(`     ${s.outletId.toUpperCase().padEnd(4)}  staffId: ${s.staffId.padEnd(14)}  email: ${s.email}`)
   );
@@ -177,4 +195,4 @@ if (require.main === module) {
   seed(true).catch(err => { console.error(err); process.exit(1); });
 }
 
-module.exports = { seed, OUTLETS_DATA, STAFF_DATA, STUDENT_DATA };
+module.exports = { seed, OUTLETS_DATA, STAFF_DATA, STUDENTS_DATA };
