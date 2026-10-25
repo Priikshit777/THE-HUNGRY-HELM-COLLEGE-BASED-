@@ -1,0 +1,91 @@
+Issue Type,Issue Key,Summary,Description,Epic Name,Epic Link,Story Points,Priority,Status,Sprint,Assignee,Component,Labels
+Epic,THH-E1,Core Platform Architecture & Multi-Outlet Foundation,"Establish foundational RESTful API, database schemas, seed configurations, and outlet domain models for campus food stalls.",Platform Foundation,,,Highest,Done,,prikshittt777@gmail.com,Backend,"architecture,backend,database"
+Epic,THH-E2,Student Identity & Secure Campus Authentication,Implement role-based JWT authentication separating student patrons from outlet staff with password hashing and session tokens.,Campus Auth,,,Highest,Done,,prikshittt777@gmail.com,Security,"auth,security,jwt"
+Epic,THH-E3,Dynamic Food Chart & Outlet Browsing Experience,"Deliver interactive visual campus food chart with outlet cards, live operational status, operating hours, and categorized menu browsing.",Food Chart & Menus,,,High,Done,,prikshittt777@gmail.com,Frontend,"ui,frontend,menus"
+Epic,THH-E4,Cart Management & Tamper-Proof Order Placement,Build responsive shopping cart with single-outlet conflict prevention and server-side cryptographic price verification at checkout.,Cart & Checkout,,,Highest,Done,,prikshittt777@gmail.com,Backend,"cart,orders,checkout,security"
+Epic,THH-E5,Real-Time Kitchen Display & Order Pipeline (KDS),Empower outlet kitchen staff with a dedicated KDS dashboard to track incoming tickets and transition order states smoothly.,Kitchen Display System,,,High,Done,,prikshittt777@gmail.com,Frontend,"staff,kds,workflow"
+Epic,THH-E6,"Delivery Tracking, Voyage History & Production Hardening","Provide student voyage order tracking, automated integration tests, runtime resilience fallbacks, and production security hardening.",Hardening & Tracking,,,Medium,Done,,prikshittt777@gmail.com,DevOps,"testing,devops,hardening"
+Story,THH-1,Multi-Outlet Seed & Campus Data Model,"As a platform administrator, I want to seed standardized Bennett University outlet metadata (IK, HC, SS, SN, HS) so that all menus, operating hours, and stall locations are consistently modeled.
+
+Acceptance Criteria:
+- Given the database is initialized, when seed.js runs, 5 campus outlets must be populated with valid IDs, names, and menu items.
+- Given existing records, seeding must perform an idempotent upsert without duplicating documents.
+- Each outlet record must contain operational status (open/closed) and wait times.",,THH-E1,3,High,Done,THH Sprint 1 - Core Platform Foundation,prikshittt777@gmail.com,Database,"database,seed,sprint1,baseline"
+Story,THH-2,Resilient In-Memory & Production MongoDB Connection Layer,"As a backend engineer, I want a dual-mode database connection architecture that automatically boots an in-memory MongoDB instance if the external Atlas cluster is unreachable, so that local development and academic evaluation never fail.
+
+Acceptance Criteria:
+- Given an unreachable MONGO_URI, when server boots, it catches the error and initializes MongoMemoryServer transparently.
+- Seeding must execute automatically on fallback initialization.
+- Application logs must clearly indicate whether Atlas or In-Memory storage is active.",,THH-E1,5,Highest,Done,THH Sprint 1 - Core Platform Foundation,prikshittt777@gmail.com,Backend,"backend,resilience,database,sprint1"
+Story,THH-3,Bennett University Student JWT Authentication,"As a Bennett University student, I want to authenticate using my campus email and password so that I receive a secure JWT bearer token to access authorized food ordering features.
+
+Acceptance Criteria:
+- Given valid student credentials (e.g. prikshit@bennett.edu.in), system returns a signed JWT containing student ID and role.
+- Given invalid credentials, system returns HTTP 401 with informative error.
+- Passwords must be hashed using bcrypt prior to database storage.",,THH-E2,5,Highest,Done,THH Sprint 1 - Core Platform Foundation,prikshittt777@gmail.com,Security,"auth,security,student,jwt,sprint1"
+Story,THH-4,Outlet Staff Credential Verification & Role Isolation,"As an outlet kitchen operator, I want to log in using my staff badge ID (e.g., IK-STAFF-001) so that I receive a staff-scoped JWT token restricting my view strictly to my stall's live kitchen orders.
+
+Acceptance Criteria:
+- Given a staff badge and password, system validates credentials and embeds outletId into JWT payload.
+- Staff token cannot access or manipulate orders belonging to other outlets.
+- Staff token cannot place customer orders.",,THH-E2,5,High,Done,THH Sprint 1 - Core Platform Foundation,prikshittt777@gmail.com,Security,"auth,security,staff,kds,sprint1"
+Story,THH-5,Interactive Campus Food Chart Outlet Discovery,"As a student explorer, I want to view a visual nautical chart of campus dining stalls with real-time operational badges and estimated preparation times so that I can decide where to eat.
+
+Acceptance Criteria:
+- Given the student dashboard loads, cards for Kathi Castle, Southern Soul, Chai & More, etc. render dynamically.
+- Outlets display live Open/Closed status, operating hours, and average wait time.
+- Clicking an outlet triggers the detailed menu modal.",,THH-E3,5,High,Done,THH Sprint 2 - Ordering Experience & Security,prikshittt777@gmail.com,Frontend,"ui,frontend,dashboard,sprint2"
+Story,THH-6,Categorized Outlet Menu Modal & Item Browsing,"As a hungry patron, I want to browse items within an outlet categorized into Beverages, Quick Bites, and Meals with prices and dietary badges (Veg/Non-Veg) so that I can easily select items.
+
+Acceptance Criteria:
+- Given an outlet is selected, modal displays all active menu items grouped by category.
+- Each item displays thumbnail, name, description, price in INR, and dietary indicator.
+- Add to Cart button increases item count with immediate visual feedback.",,THH-E3,3,Medium,Done,THH Sprint 2 - Ordering Experience & Security,prikshittt777@gmail.com,Frontend,"ui,menus,modal,sprint2"
+Story,THH-7,LocalStorage Persistent Cart & Cross-Outlet Conflict Prevention,"As a student ordering food, I want my cart to persist across page refreshes and prevent mixing items from different outlets so that kitchen dispatch remains clean and manageable.
+
+Acceptance Criteria:
+- Cart state persists in localStorage across browser reloads.
+- Attempting to add an item from Outlet B while Cart contains items from Outlet A prompts clear-cart confirmation modal.
+- Increment, decrement, and item removal dynamically update subtotal, tax, and order total.",,THH-E4,5,High,Done,THH Sprint 2 - Ordering Experience & Security,prikshittt777@gmail.com,Frontend,"cart,frontend,validation,sprint2"
+Story,THH-8,Cryptographically Verified Server-Side Order Checkout,"As a security-conscious engineer, I want the backend to re-calculate item prices from database source-of-truth during checkout rather than trusting client-submitted prices, preventing client-side price tampering exploits.
+
+Acceptance Criteria:
+- Given checkout payload with altered item prices (e.g. ₹1 instead of ₹180), backend ignores client price and fetches DB price.
+- Backend verifies student JWT token and links order to student ID.
+- Order record created with status 'incoming', unique Order ID (#101), and initial voyage log.",,THH-E4,5,Highest,Done,THH Sprint 2 - Ordering Experience & Security,prikshittt777@gmail.com,Backend,"security,backend,orders,checkout,sprint2"
+Story,THH-9,Real-Time Kitchen Display System (KDS) for Outlet Staff,"As an outlet cook, I want a dedicated Kanban-style kitchen display showing active tickets organized by status so that my crew can prioritize food preparation during peak campus rush hours.
+
+Acceptance Criteria:
+- Given staff logs into KDS, only tickets matching the authenticated staff outletId are rendered.
+- Tickets display customer name, ordered items, quantity, special instructions, and elapsed timer.
+- Visual alerts trigger for orders waiting longer than 15 minutes.",,THH-E5,8,Highest,Done,THH Sprint 3 - Kitchen Display & Live Tracking,prikshittt777@gmail.com,Frontend,"staff,kds,ui,sprint3"
+Story,THH-10,4-Stage Order Pipeline State Machine Transitions,"As kitchen staff, I want to advance order status sequentially through incoming -> preparing -> ready -> completed via secure API endpoints so that both staff and students stay synchronized.
+
+Acceptance Criteria:
+- PATCH /api/orders/:id/status endpoint enforces valid sequential state transitions.
+- Disallowed state skips (e.g., incoming -> completed) return HTTP 400 Bad Request.
+- Timestamps are recorded for each transition milestone.",,THH-E5,5,High,Done,THH Sprint 3 - Kitchen Display & Live Tracking,prikshittt777@gmail.com,Backend,"backend,state-machine,orders,sprint3"
+Story,THH-11,Student Voyage Log & Live Order Status Polling,"As a student waiting for lunch, I want a live Voyage Log displaying an animated compass timeline reflecting my order's current stage so that I know exactly when to walk to the outlet counter.
+
+Acceptance Criteria:
+- Student order tracking screen fetches order updates via polling/WebSocket.
+- Active stage lights up on nautical milestone tracker (Docked -> Cooking -> Ready -> Picked Up).
+- Notification badge sounds or alerts when order moves to 'ready'.",,THH-E6,5,High,Done,THH Sprint 3 - Kitchen Display & Live Tracking,prikshittt777@gmail.com,Frontend,"frontend,tracking,student,sprint3"
+Story,THH-12,Port Conflict Resolution & Dynamic Local Environment Switching,"As a DevOps engineer, I want the system to dynamically bind to port 5001 when macOS ControlCenter AirPlay occupies port 5000 and update frontend API baseUrl automatically, ensuring zero runtime initialization collisions.
+
+Acceptance Criteria:
+- Environment variable PORT=5001 respected in backend config.
+- Frontend script.js detects window.location or environment config to route API calls to active port.
+- Health check endpoint GET /api/health responds with HTTP 200 and uptime metrics.",,THH-E6,3,Medium,Done,"THH Sprint 4 - Hardening, Quality & Production Release",prikshittt777@gmail.com,DevOps,"devops,networking,environment,sprint4"
+Story,THH-13,End-to-End Integration Test Suite & Automated Verification,"As a QA test engineer, I want an automated end-to-end integration test script that verifies student auth, outlet browsing, tamper-proof order creation, staff order transition, and voyage log delivery in a single pipeline run.
+
+Acceptance Criteria:
+- Test suite executes all 5 core stages against running backend.
+- Exit code 0 returned on 100% test pass; non-zero on failure.
+- Detailed assertions verify payload types, JWT claims, and price calculations.",,THH-E6,5,High,Done,"THH Sprint 4 - Hardening, Quality & Production Release",prikshittt777@gmail.com,Testing,"qa,testing,automation,sprint4"
+Story,THH-14,"Production Hardening, CORS & Helmet Security Audit","As a security auditor, I want to sanitize HTTP headers, configure CORS domain whitelisting, and implement error masking so that no stack traces or MongoDB connection strings are exposed in API error payloads.
+
+Acceptance Criteria:
+- Helmet middleware attached to Express application.
+- CORS configured with explicit allowed origins.
+- Generic 500 Internal Server Error returned to clients with internal logging.",,THH-E6,5,High,Done,"THH Sprint 4 - Hardening, Quality & Production Release",prikshittt777@gmail.com,Security,"security,audit,cors,hardening,sprint4"
