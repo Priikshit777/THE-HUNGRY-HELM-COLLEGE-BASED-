@@ -363,37 +363,50 @@ def build_pdf():
     elements.append(Spacer(1, 3))
 
     if os.path.exists(f"{EVIDENCE_DIR}/jira_backlog_sprints_1_2.png"):
-        elements.append(Image(f"{EVIDENCE_DIR}/jira_backlog_sprints_1_2.png", width=7.0 * inch, height=2.2 * inch))
+        elements.append(Image(f"{EVIDENCE_DIR}/jira_backlog_sprints_1_2.png", width=7.0 * inch, height=2.1 * inch))
         elements.append(Paragraph("Figure 3: Jira Backlog view showing THH Sprint 1 — Foundation (12–26 Oct) and THH Sprint 2 — Ordering (26 Oct–8 Nov)", caption_style))
-    if os.path.exists("Hungry_Helm_Phase2_Evidence/deliverable_s1_foodchart.png"):
-        elements.append(Image("Hungry_Helm_Phase2_Evidence/deliverable_s1_foodchart.png", width=7.0 * inch, height=2.0 * inch))
-        elements.append(Paragraph("Figure 4: Sprint 1 working deliverable — running campus food chart at http://localhost:3000", caption_style))
+    if os.path.exists("docs/phase2/evidence/app_screens/01_student_login_screen.png"):
+        elements.append(Image("docs/phase2/evidence/app_screens/01_student_login_screen.png", width=7.0 * inch, height=2.2 * inch))
+        elements.append(Paragraph("Figure 4: Sprint 1 working deliverable — Student Authentication Gateway enforcing @bennett.edu.in email domain", caption_style))
     elements.append(PageBreak())
 
     # 3.2 to 3.4 Sprints
     elements.append(Paragraph("3.2 Sprint 2 — Ordering (26 Oct – 8 Nov, 4 Work Items)", h2_style))
     elements.append(Paragraph("<b>Committed Items:</b> THH-13 (5 SP), THH-14 (3 SP), THH-15 (5 SP), THH-16 (5 SP) = 18 pts.<br/>"
-                              "<b>Working Deliverable:</b> Multi-stall cart shield prompting confirmation on stall change, and server-side price recalculation in <code>backend/controllers/orderController.js</code> rejecting client-tampered totals.", body_style))
+                              "<b>Working Deliverable:</b> Interactive campus food chart, categorized outlet menu browsing, and server-side price recalculation in <code>backend/controllers/orderController.js</code> rejecting client-tampered totals.", body_style))
+    elements.append(Spacer(1, 3))
+    if os.path.exists("docs/phase2/evidence/app_screens/03_nautical_campus_chart.png"):
+        elements.append(Image("docs/phase2/evidence/app_screens/03_nautical_campus_chart.png", width=7.0 * inch, height=2.1 * inch))
+        elements.append(Paragraph("Figure 5a: Sprint 2 working deliverable — Interactive Nautical Campus Food Chart showing 5 food stalls and wait badges", caption_style))
+    if os.path.exists("docs/phase2/evidence/app_screens/05_outlet_menu_browsing.png"):
+        elements.append(Image("docs/phase2/evidence/app_screens/05_outlet_menu_browsing.png", width=7.0 * inch, height=2.0 * inch))
+        elements.append(Paragraph("Figure 5b: Sprint 2 working deliverable — Categorized outlet menu browsing and cart management", caption_style))
     elements.append(Spacer(1, 3))
 
     elements.append(Paragraph("3.3 Sprint 3 — KDS & Status (9 Nov – 22 Nov, 3 Work Items)", h2_style))
     elements.append(Paragraph("<b>Committed Items:</b> THH-17 (8 SP), THH-18 (5 SP), THH-19 (5 SP) = 18 pts.<br/>"
-                              "<b>Working Deliverable:</b> Real-time staff terminal at <code>frontend/kds.html</code> advancing order tokens through Incoming -> Preparing -> Ready -> Delivered.", body_style))
+                              "<b>Working Deliverable:</b> Real-time staff terminal at <code>frontend/index.html</code> (staff mode) advancing order tokens through Incoming -> Preparing -> Ready -> Delivered, and student Voyage Log order tracking.", body_style))
     elements.append(Spacer(1, 3))
     if os.path.exists(f"{EVIDENCE_DIR}/jira_backlog_sprints_3_4.png"):
-        elements.append(Image(f"{EVIDENCE_DIR}/jira_backlog_sprints_3_4.png", width=7.0 * inch, height=2.1 * inch))
-        elements.append(Paragraph("Figure 5: Jira Backlog view showing THH Sprint 3 — KDS & Status (9–22 Nov) and THH Sprint 4 — Hardening (23 Nov–6 Dec)", caption_style))
-    if os.path.exists("Hungry_Helm_Phase2_Evidence/deliverable_s3_kds.png"):
-        elements.append(Image("Hungry_Helm_Phase2_Evidence/deliverable_s3_kds.png", width=7.0 * inch, height=2.0 * inch))
-        elements.append(Paragraph("Figure 6: Sprint 3 working deliverable — running Kitchen Display System (KDS) at http://localhost:3000/kds.html", caption_style))
+        elements.append(Image(f"{EVIDENCE_DIR}/jira_backlog_sprints_3_4.png", width=7.0 * inch, height=1.9 * inch))
+        elements.append(Paragraph("Figure 6: Jira Backlog view showing THH Sprint 3 — KDS & Status (9–22 Nov) and THH Sprint 4 — Hardening (23 Nov–6 Dec)", caption_style))
+    if os.path.exists("docs/phase2/evidence/app_screens/09_staff_kds_board.png"):
+        elements.append(Image("docs/phase2/evidence/app_screens/09_staff_kds_board.png", width=7.0 * inch, height=2.0 * inch))
+        elements.append(Paragraph("Figure 7a: Sprint 3 working deliverable — Staff Kitchen Display System (KDS) with active FIFO order ticket columns", caption_style))
+    if os.path.exists("docs/phase2/evidence/app_screens/08_voyage_log_my_orders.png"):
+        elements.append(Image("docs/phase2/evidence/app_screens/08_voyage_log_my_orders.png", width=7.0 * inch, height=1.9 * inch))
+        elements.append(Paragraph("Figure 7b: Sprint 3 working deliverable — Student Voyage Log with live 4-stage order state machine tracking", caption_style))
     elements.append(Spacer(1, 3))
 
     elements.append(Paragraph("3.4 Sprint 4 — Hardening (23 Nov – 6 Dec, 3 Work Items) & Backlog Item THH-2", h2_style))
     elements.append(Paragraph("<b>Committed Items:</b> THH-20 (3 SP), THH-21 (5 SP), THH-22 (5 SP) = 13 pts. Standalone backlog item: THH-2 (3 SP).<br/>"
-                              "<b>Working Deliverable:</b> Backend port migrated from 5000 to 5001, automated Supertest regression suite, and Helmet CSP headers.", body_style))
+                              "<b>Working Deliverable:</b> Backend port migrated from 5000 to 5001, automated Supertest regression suite, Helmet CSP headers, and Staff Daily Analytics dashboard.", body_style))
     if os.path.exists(f"{EVIDENCE_DIR}/jira_backlog_remaining_thh2.png"):
-        elements.append(Image(f"{EVIDENCE_DIR}/jira_backlog_remaining_thh2.png", width=7.0 * inch, height=1.8 * inch))
-        elements.append(Paragraph("Figure 7: Jira Backlog showing remaining work item THH-2 outside the four sprint groups", caption_style))
+        elements.append(Image(f"{EVIDENCE_DIR}/jira_backlog_remaining_thh2.png", width=7.0 * inch, height=1.6 * inch))
+        elements.append(Paragraph("Figure 8: Jira Backlog showing remaining work item THH-2 outside the four sprint groups", caption_style))
+    if os.path.exists("docs/phase2/evidence/app_screens/11_staff_analytics_revenue.png"):
+        elements.append(Image("docs/phase2/evidence/app_screens/11_staff_analytics_revenue.png", width=7.0 * inch, height=1.9 * inch))
+        elements.append(Paragraph("Figure 9: Sprint 4 working deliverable — Staff Daily Analytics & Revenue metrics dashboard", caption_style))
     elements.append(PageBreak())
 
     # ---------------------------------------------------------
@@ -588,7 +601,62 @@ def build_pdf():
     elements.append(Spacer(1, 6))
     elements.append(Paragraph("<b>Evaluator Name & Signature:</b> <u>Rashmi Rani</u> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Date:</b> ______________", body_style))
 
+    # ---------------------------------------------------------
+    # APPENDIX: APPLICATION IMPLEMENTATION EVIDENCE GALLERY
+    # ---------------------------------------------------------
+    elements.append(PageBreak())
+    elements.append(Paragraph("Appendix: The Hungry Helm — Application UI & Implementation Gallery", h1_style))
+    elements.append(Paragraph(
+        "The following 13 visual evidence captures were taken directly from the live Hungry Helm web application "
+        "(frontend at <code>http://localhost:3000</code> and backend API at <code>http://localhost:5001</code> with active in-memory MongoDB fallback). "
+        "They illustrate the complete user voyage across student authentication, interactive campus chart discovery, outlet menu browsing, "
+        "cart checkout, staff kitchen display operations, menu manifest management, and campus analytics.",
+        body_style
+    ))
+    elements.append(Spacer(1, 4))
+
+    app_screens_meta = [
+        ("Figure App-1: Student Authentication Gateway", "docs/phase2/evidence/app_screens/01_student_login_screen.png", 
+         "Student login gateway enforcing @bennett.edu.in email domain validation and cryptographic JWT issuance."),
+        ("Figure App-2: Staff Credential & Stall Authority Gateway", "docs/phase2/evidence/app_screens/02_staff_login_tab.png", 
+         "Multi-tenant outlet staff authentication portal with outlet selection (Infinity Kitchens, House of Chow, etc.) and security PIN."),
+        ("Figure App-3: Interactive Nautical Campus Food Chart", "docs/phase2/evidence/app_screens/03_nautical_campus_chart.png", 
+         "Nautical campus chart displaying 5 campus food stalls with live queue badges, preparation estimates, and status pills."),
+        ("Figure App-4: Slide-out Port Details & Quick Order Drawer", "docs/phase2/evidence/app_screens/04_port_details_drawer.png", 
+         "Interactive slide-in drawer showing stall opening hours, rating, cuisine summary, and quick-add catalog."),
+        ("Figure App-5: Categorized Outlet Menu Browsing", "docs/phase2/evidence/app_screens/05_outlet_menu_browsing.png", 
+         "Full outlet menu view with category sidebar, veg/non-veg indicator pins, item descriptions, and pricing."),
+        ("Figure App-6: Active Persistent Shopping Cart & Price Total", "docs/phase2/evidence/app_screens/06_cart_with_items.png", 
+         "Interactive cart panel displaying selected campus items, quantity controls (+/-), and live total calculation (₹490)."),
+        ("Figure App-7: Order Confirmation & Token Checkout Modal", "docs/phase2/evidence/app_screens/07_order_confirmation_dialog.png", 
+         "Modal dialog confirming order items, bill breakdown, and token reservation before backend transmission."),
+        ("Figure App-8: Voyage Log & Live Student Order Tracking", "docs/phase2/evidence/app_screens/08_voyage_log_my_orders.png", 
+         "Voyage Log displaying active order token #IK-104 with 4-stage state machine (Preparing in Galley) and historical order receipts."),
+        ("Figure App-9: Staff Kitchen Display System (KDS)", "docs/phase2/evidence/app_screens/09_staff_kds_board.png", 
+         "Real-time kitchen terminal organizing orders into Incoming, Preparing, and Ready for Pickup queues with timer and action triggers."),
+        ("Figure App-10: Staff Outlet Menu Manifest & Stock Editor", "docs/phase2/evidence/app_screens/10_staff_menu_manifest_editor.png", 
+         "Stall management interface allowing staff to toggle item stock availability in real time and add new dishes."),
+        ("Figure App-11: Staff Daily Revenue, Orders & Peak Hour Analytics", "docs/phase2/evidence/app_screens/11_staff_analytics_revenue.png", 
+         "Executive reporting dashboard featuring Revenue KPI (₹8,240), Order Volume (47), Top Selling Dishes ranking, and Peak Hours bar graph."),
+        ("Figure App-12: Dual-Role Entrance Selection Gateway", "docs/phase2/evidence/app_screens/12_gateway_role_selection.png", 
+         "Role routing gateway allowing campus visitors to choose between Student Helm and Staff Port Authority portals."),
+        ("Figure App-13: Dark Mode Architectural Theme Prototype", "docs/phase2/evidence/app_screens/13_darkmode_prototype.png", 
+         "Dark theme architectural prototype illustrating campus food ordering UI under evening low-light conditions.")
+    ]
+
+    for title, img_path, desc in app_screens_meta:
+        if os.path.exists(img_path):
+            elements.append(Paragraph(f"<b>{title}</b>", h2_style))
+            elements.append(Image(img_path, width=7.0 * inch, height=3.0 * inch))
+            elements.append(Paragraph(desc, caption_style))
+            elements.append(Spacer(1, 4))
+
     doc.build(elements, canvasmaker=NumberedCanvas)
+    
+    # Mirror PDF to Desktop and Downloads
+    import shutil
+    shutil.copyfile(pdf_filename, f"/Users/prikshit/Desktop/{pdf_filename}")
+    shutil.copyfile(pdf_filename, f"/Users/prikshit/Downloads/{pdf_filename}")
     print(f"Successfully generated updated PDF report: {pdf_filename}")
 
 if __name__ == "__main__":

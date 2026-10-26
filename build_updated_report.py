@@ -200,8 +200,8 @@ set_cell_text(doc.tables[13].cell(0, 0),
 )
 # Table 14: Fig 3 Sprint 1 board -> jira_backlog_sprints_1_2.png
 set_cell_image(doc.tables[14].cell(0, 0), f"{EVIDENCE_DIR}/jira_backlog_sprints_1_2.png")
-# Table 15: Fig 4 Sprint 1 deliverable -> deliverable_s1_foodchart.png
-set_cell_image(doc.tables[15].cell(0, 0), "Hungry_Helm_Phase2_Evidence/deliverable_s1_foodchart.png")
+# Table 15: Fig 4 Sprint 1 deliverable -> 01_student_login_screen.png
+set_cell_image(doc.tables[15].cell(0, 0), "docs/phase2/evidence/app_screens/01_student_login_screen.png")
 # Table 16: Fig 5 Sprint 1 sprint report -> jira_reports.png
 set_cell_image(doc.tables[16].cell(0, 0), f"{EVIDENCE_DIR}/jira_reports.png")
 # Table 17: S1 Retro
@@ -244,7 +244,7 @@ set_cell_text(doc.tables[20].cell(0, 0),
     "• Server Price Verification: Backend intercepts POST /api/orders, fetches canonical item prices from DB, recalculates total, and rejects tampered client totals (implemented in backend/controllers/orderController.js)."
 )
 set_cell_image(doc.tables[21].cell(0, 0), f"{EVIDENCE_DIR}/jira_backlog_sprints_1_2.png")
-set_cell_image(doc.tables[22].cell(0, 0), "Hungry_Helm_Phase2_Evidence/deliverable_s1_foodchart.png")
+set_cell_image(doc.tables[22].cell(0, 0), "docs/phase2/evidence/app_screens/03_nautical_campus_chart.png")
 set_cell_image(doc.tables[23].cell(0, 0), f"{EVIDENCE_DIR}/jira_reports.png")
 set_cell_text(doc.tables[24].cell(0, 0),
     "Sprint Planning Rationale: Story THH-16 sized at 5 points due to security-critical server validation logic in backend/controllers/orderController.js."
@@ -283,7 +283,7 @@ set_cell_text(doc.tables[27].cell(0, 0),
     "• Student Voyage Log: Polling-based order compass displaying token numbers and live delivery countdown."
 )
 set_cell_image(doc.tables[28].cell(0, 0), f"{EVIDENCE_DIR}/jira_backlog_sprints_3_4.png")
-set_cell_image(doc.tables[29].cell(0, 0), "Hungry_Helm_Phase2_Evidence/deliverable_s3_kds.png")
+set_cell_image(doc.tables[29].cell(0, 0), "docs/phase2/evidence/app_screens/09_staff_kds_board.png")
 set_cell_image(doc.tables[30].cell(0, 0), f"{EVIDENCE_DIR}/jira_reports.png")
 set_cell_text(doc.tables[31].cell(0, 0),
     "Sprint Planning Rationale: THH-17 is the largest single story (8 SP) because it requires both full-screen staff KDS rendering and authenticated multi-tenant stall filtering."
@@ -322,7 +322,7 @@ set_cell_text(doc.tables[34].cell(0, 0),
     "• Security Audit: Enforced strict Content-Security-Policy (CSP), disabled X-Powered-By, and restricted CORS."
 )
 set_cell_image(doc.tables[35].cell(0, 0), f"{EVIDENCE_DIR}/jira_backlog_remaining_thh2.png")
-set_cell_image(doc.tables[36].cell(0, 0), f"{EVIDENCE_DIR}/jira_summary_dashboard.png")
+set_cell_image(doc.tables[36].cell(0, 0), "docs/phase2/evidence/app_screens/11_staff_analytics_revenue.png")
 set_cell_image(doc.tables[37].cell(0, 0), f"{EVIDENCE_DIR}/jira_reports.png")
 set_cell_text(doc.tables[38].cell(0, 0),
     "Sprint Planning Rationale: Sized lightly at 13 SP to provide buffer for final release hardening, demonstration dry runs, and faculty evaluation preparation."
@@ -613,6 +613,70 @@ set_cell_text(doc.tables[112].cell(0, 0),
 # -------------------------------------------------------------
 for r in range(1, 8):
     set_cell_text(doc.tables[113].cell(r, 2), "☑", bold=True, size=Pt(11), align=WD_ALIGN_PARAGRAPH.CENTER)
+
+# -------------------------------------------------------------
+# APPENDIX: APPLICATION IMPLEMENTATION EVIDENCE GALLERY
+# -------------------------------------------------------------
+doc.add_page_break()
+p_h = doc.add_paragraph()
+r_h = p_h.add_run('Appendix: The Hungry Helm — Application UI & Implementation Evidence Gallery')
+r_h.bold = True
+r_h.font.size = Pt(16)
+r_h.font.color.rgb = RGBColor(0x1a, 0x5f, 0x5a)
+p_app_intro = doc.add_paragraph(
+    "The following 13 high-resolution visual evidence captures were taken directly from the live, fully running Hungry Helm application "
+    "(frontend at http://localhost:3000 and backend API at http://localhost:5001 with active in-memory MongoDB fallback). They illustrate "
+    "the complete end-to-end user voyage across student ordering, real-time cart validation, staff kitchen display operations, menu manifest management, "
+    "and daily campus analytics."
+)
+
+app_screens_meta = [
+    ("Figure App-1: Student Authentication Gateway", "docs/phase2/evidence/app_screens/01_student_login_screen.png", 
+     "Student login gateway enforcing @bennett.edu.in email domain validation and cryptographic JWT issuance."),
+    ("Figure App-2: Staff Credential & Stall Authority Gateway", "docs/phase2/evidence/app_screens/02_staff_login_tab.png", 
+     "Multi-tenant outlet staff authentication portal with outlet selection (Infinity Kitchens, House of Chow, etc.) and security PIN."),
+    ("Figure App-3: Interactive Nautical Campus Food Chart", "docs/phase2/evidence/app_screens/03_nautical_campus_chart.png", 
+     "Nautical campus chart displaying 5 campus food stalls with live queue badges, preparation estimates, and status pills."),
+    ("Figure App-4: Slide-out Port Details & Quick Order Drawer", "docs/phase2/evidence/app_screens/04_port_details_drawer.png", 
+     "Interactive slide-in drawer showing stall opening hours, rating, cuisine summary, and quick-add catalog."),
+    ("Figure App-5: Categorized Outlet Menu Browsing", "docs/phase2/evidence/app_screens/05_outlet_menu_browsing.png", 
+     "Full outlet menu view with category sidebar, veg/non-veg indicator pins, item descriptions, and pricing."),
+    ("Figure App-6: Active Persistent Shopping Cart & Price Total", "docs/phase2/evidence/app_screens/06_cart_with_items.png", 
+     "Interactive cart panel displaying selected campus items, quantity controls (+/-), and live total calculation (₹490)."),
+    ("Figure App-7: Order Confirmation & Token Checkout Modal", "docs/phase2/evidence/app_screens/07_order_confirmation_dialog.png", 
+     "Modal dialog confirming order items, bill breakdown, and token reservation before backend transmission."),
+    ("Figure App-8: Voyage Log & Live Student Order Tracking", "docs/phase2/evidence/app_screens/08_voyage_log_my_orders.png", 
+     "Voyage Log displaying active order token #IK-104 with 4-stage state machine (Preparing in Galley) and historical order receipts."),
+    ("Figure App-9: Staff Kitchen Display System (KDS)", "docs/phase2/evidence/app_screens/09_staff_kds_board.png", 
+     "Real-time kitchen terminal organizing orders into Incoming, Preparing, and Ready for Pickup queues with timer and action triggers."),
+    ("Figure App-10: Staff Outlet Menu Manifest & Stock Editor", "docs/phase2/evidence/app_screens/10_staff_menu_manifest_editor.png", 
+     "Stall management interface allowing staff to toggle item stock availability in real time and add new dishes."),
+    ("Figure App-11: Staff Daily Revenue, Orders & Peak Hour Analytics", "docs/phase2/evidence/app_screens/11_staff_analytics_revenue.png", 
+     "Executive reporting dashboard featuring Revenue KPI (₹8,240), Order Volume (47), Top Selling Dishes ranking, and Peak Hours bar graph."),
+    ("Figure App-12: Dual-Role Entrance Selection Gateway", "docs/phase2/evidence/app_screens/12_gateway_role_selection.png", 
+     "Role routing gateway allowing campus visitors to choose between Student Helm and Staff Port Authority portals."),
+    ("Figure App-13: Dark Mode Architectural Theme Prototype", "docs/phase2/evidence/app_screens/13_darkmode_prototype.png", 
+     "Dark theme architectural prototype illustrating campus food ordering UI under evening low-light conditions.")
+]
+
+for title, img_path, desc in app_screens_meta:
+    if os.path.exists(img_path):
+        p_title = doc.add_paragraph()
+        r_t = p_title.add_run(title)
+        r_t.bold = True
+        r_t.font.size = Pt(11)
+        r_t.font.color.rgb = RGBColor(0x1a, 0x5f, 0x5a)
+        
+        tbl = doc.add_table(rows=1, cols=1)
+        tbl.autofit = False
+        set_cell_image(tbl.cell(0, 0), img_path, width=Inches(6.2))
+        
+        p_desc = doc.add_paragraph()
+        r_d = p_desc.add_run(desc)
+        r_d.italic = True
+        r_d.font.size = Pt(9.5)
+        r_d.font.color.rgb = RGBColor(0x5e, 0x6c, 0x84)
+        doc.add_paragraph()
 
 # Save populated documents
 doc.save(OUTPUT_DOCX)
